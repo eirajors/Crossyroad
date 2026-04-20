@@ -2,11 +2,9 @@ package no.uib.inf101.crossyroad;
 
 import javax.swing.JFrame;
 
-import no.uib.inf101.grid.CellPosition;
 import no.uib.inf101.grid.Grid;
 import no.uib.inf101.grid.IGrid;
 import no.uib.inf101.crossyroad.controller.GameController;
-import no.uib.inf101.crossyroad.model.Board;
 import no.uib.inf101.crossyroad.model.GameModel;
 import no.uib.inf101.crossyroad.view.GameView;
 
@@ -26,8 +24,9 @@ public class Main {
 		IGrid grid = new Grid(15, 20, ' ');
 		GameModel model = new GameModel(grid);
 
-		GameView view = new GameView(model);
-		new GameController(model, view);
+		GameView view = new GameView();
+		GameController controller = new GameController(model, view);
+		controller.updateView();
 
 		frame.add(view);
 		frame.pack();

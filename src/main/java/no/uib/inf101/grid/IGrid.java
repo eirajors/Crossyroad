@@ -1,7 +1,5 @@
 package no.uib.inf101.grid;
 
-import no.uib.inf101.grid.CellPosition;
-
 public interface IGrid extends GridDimension, Iterable<GridCell> {
 
 	/**

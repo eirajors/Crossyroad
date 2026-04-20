@@ -2,8 +2,6 @@ package no.uib.inf101.grid;
 
 import java.util.Iterator;
 
-import no.uib.inf101.grid.CellPosition;
-
 public class RowWiseGridIterator implements Iterator<GridCell>{
 
     private CellPosition next;

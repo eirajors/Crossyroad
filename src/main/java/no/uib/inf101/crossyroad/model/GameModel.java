@@ -9,30 +9,32 @@ import no.uib.inf101.grid.IGrid;
 
 public class GameModel implements ControllableGameModel, ViewableGameModel{
 
+  private GameState gameState; 
   private IGrid grid;
   private Player player; 
   private final Board board; 
-  private boolean won;
 
+  /**
+   * The constructor for the GameModel
+   * @param grid initiates a gamemodel given a grid
+   */
   public GameModel(IGrid grid) {
     this.grid = grid;
     this.board = new Board(grid);
     this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r');
-    this.won = false; 
+    this.gameState = GameState.ACTIVE;
 
     grid.set(player.getCellPosition(), player.getChar());
   }
 
-  /**
-   * Moves player by deltarows and deltacols
-   * 
-   * @param deltaRow how many rows the player is moved by
-   * @param deltaCol how many cols the player is moved by
-   * @return returns true if the move is allowed, and false otherwise
-   */
+  @Override
   public boolean movePlayer (int deltaRow, int deltaCol) {
     Player candidatePlayer = this.player.shiftPlayer(deltaRow, deltaCol);
-    
+
+    if (gameState != GameState.ACTIVE) {
+      return false; 
+    }
+
     if (!this.isLegalPosition(candidatePlayer)) {
       return false; 
     }
@@ -40,17 +42,29 @@ public class GameModel implements ControllableGameModel, ViewableGameModel{
     this.player = candidatePlayer; 
     grid.set(player.getCellPosition(), player.getChar());
 
-    won = isWon(candidatePlayer);
+    if (isWon(this.player)) {
+      gameState = GameState.WON; 
+    }
     
     return true; 
   }
 
-  public boolean isWon(Player player) {
+  /**
+   * 
+   * @param player
+   * @return
+   */
+  private boolean isWon(Player player) {
     if (player.getCellPosition().row() == 0) {
       return true; 
     }
     return false; 
 
+  }
+
+  @Override
+  public GameState getGameState() {
+    return gameState; 
   }
 
   /**
@@ -69,11 +83,17 @@ public class GameModel implements ControllableGameModel, ViewableGameModel{
     return true; 
   }
 
-
+  /**
+   * 
+   * @return returns the current cellposition of the player
+   */
   public CellPosition getPlayerPosition(){
     return this.player.getCellPosition();
   }
 
+  /**
+   * @return returns the player
+   */
   public Player getPlayer() {
     return this.player; 
   }

@@ -2,14 +2,13 @@ package no.uib.inf101.crossyroad.controller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.Timer;
 
 import no.uib.inf101.crossyroad.view.GameView;
 
 public class GameController implements KeyListener {
 
   private final ControllableGameModel model;
-  private GameView view; 
+  private final GameView view; 
 
   public GameController (ControllableGameModel model, GameView view) {
     this.model = model;
@@ -18,6 +17,10 @@ public class GameController implements KeyListener {
     this.view.addKeyListener(this);
     this.view.setFocusable(true);
     this.view.requestFocusInWindow();
+  }
+
+  public void updateView() {
+    view.update(model.getTiles(), model.getDimension(), model.getGameState());
   }
 
   @Override
@@ -41,6 +44,7 @@ public class GameController implements KeyListener {
     }
 
     this.view.repaint();
+    updateView();
 
   }
 
