@@ -1,0 +1,1079 @@
+=== src/main/java/no/uib/inf101/consent/Consent.java ===
+package no.uib.inf101.consent;
+
+/**
+ * Boolean variables to give or not give consent for the use of semesteroppgave
+ * 2 in teaching of computer science to future studenents at the Department of
+ * Informatics, University of Bergen.
+ * 
+ * The video sharing consent is only applicable if you produced a video for
+ * semesteroppgave 2.
+ */
+public class Consent {
+
+    /**
+     * I give consent that my name is published along side this application (and
+     * video).
+     */
+    public static final Boolean shareName = null;
+
+    /**
+     * I give consent that this application is used for teaching activities
+     * at the Department of Informatics, University of Bergen.
+     */
+    public static final Boolean shareApplication = null;
+
+    /**
+     * I give consent that the video produced along side this application is used
+     * for teaching activities at the Department of Informatics, University
+     * of Bergen.
+     */
+    public static final Boolean shareVideo = null;
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/Main.java ===
+package no.uib.inf101.crossyroad;
+
+import javax.swing.JFrame;
+
+import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.Grid;
+import no.uib.inf101.grid.IGrid;
+import no.uib.inf101.crossyroad.controller.GameController;
+import no.uib.inf101.crossyroad.model.Board;
+import no.uib.inf101.crossyroad.model.GameModel;
+import no.uib.inf101.crossyroad.view.GameView;
+
+
+public class Main {
+
+	public static void main(String[] args) {
+  	
+		JFrame frame = new JFrame("Cross the grid");
+
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(true);
+		frame.setLocationRelativeTo(null);
+		frame.setLayout(new java.awt.BorderLayout());
+		//frame.setSize(400, 400);
+		
+		IGrid grid = new Grid(15, 20, ' ');
+		GameModel model = new GameModel(grid);
+
+		GameView view = new GameView(grid);
+		new GameController(model, view);
+
+		frame.add(view);
+		frame.pack();
+
+		frame.setVisible(true);
+
+
+	}
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/controller/ControllableGameModel.java ===
+package no.uib.inf101.crossyroad.controller;
+
+public interface ControllableGameModel {
+
+  public boolean movePlayer(int deltaRow, int deltaCol);
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/controller/GameController.java ===
+package no.uib.inf101.crossyroad.controller;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import javax.swing.Timer;
+
+import no.uib.inf101.crossyroad.view.GameView;
+
+public class GameController implements KeyListener {
+
+  private final ControllableGameModel model;
+  private GameView view; 
+
+  public GameController (ControllableGameModel model, GameView view) {
+    this.model = model;
+    this.view = view;
+
+    this.view.addKeyListener(this);
+    this.view.setFocusable(true);
+    this.view.requestFocusInWindow();
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {}
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+
+    if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+      this.model.movePlayer(0, -1);
+    }
+    else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+      this.model.movePlayer(0, 1);
+    }
+    else if (e.getKeyCode() == KeyEvent.VK_UP) {
+      this.model.movePlayer(-1, 0);
+
+    }
+    else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+      this.model.movePlayer(1, 0);
+    }
+
+    this.view.repaint();
+
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {}
+
+}
+=== src/main/java/no/uib/inf101/crossyroad/model/Board.java ===
+package no.uib.inf101.crossyroad.model;
+
+import java.util.Iterator;
+
+import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.Grid;
+import no.uib.inf101.grid.GridCell;
+import no.uib.inf101.grid.GridDimension;
+import no.uib.inf101.grid.IGrid;
+public class Board implements Iterable<GridCell>, GridDimension {
+
+  private final IGrid grid;
+
+  /**
+   * A constructor for TetrisBoard
+   * Creates a tetrisboard given a grid
+   * 
+   * @param grid the grid used to create the board
+   */
+  public Board(IGrid grid) {
+    this.grid = grid;
+  }
+  
+  /**
+   * Another constructor for TetrisBoard
+   * Creates a tetrisboard griven a number of rows and columns
+   * 
+   * @param rows the number of rows
+   * @param cols the number of columns 
+   */
+  public Board(int rows, int cols) {
+    this(new Grid(rows, cols, '-'));
+  }
+
+  @Override
+  public int rows() {
+    return this.grid.rows();
+  }
+
+  @Override
+  public int cols() {
+    return this.grid.cols();
+  }
+
+  @Override
+  public Iterator<GridCell> iterator() {
+    return this.grid.iterator();
+  }
+
+  /**
+   * Checks whether a position on the board is empty
+   * 
+   * @param pos the position to check
+   * @return true if the position is empty (symbol is '-'), false otherwise
+   */
+  public boolean isFree(CellPosition pos) {
+    if (this.grid.get(pos) == ' ') {
+      return true;
+    }
+    return false;
+  }
+
+
+  /***
+   * Checks if the given position is on the board
+   * 
+   * @param pos the position that is checked
+   * @return true if the position is valid, false otherwise 
+   */
+  public boolean positionIsOnGrid(CellPosition pos) {
+    if (pos.col() < 0 || pos.col() >= this.cols()) {
+      return false; 
+    }
+    if (pos.row() < 0 || pos.row() >= this.rows()) {
+      return false;
+    }
+    return true; 
+  }
+
+}
+
+
+
+
+=== src/main/java/no/uib/inf101/crossyroad/model/Direction.java ===
+package no.uib.inf101.crossyroad.model;
+
+public enum Direction {
+  LEFT, RIGHT, UP, DOWN
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/model/GameModel.java ===
+package no.uib.inf101.crossyroad.model;
+
+import no.uib.inf101.crossyroad.controller.ControllableGameModel;
+import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.IGrid;
+
+public class GameModel implements ControllableGameModel{
+
+  private IGrid grid;
+  private Player player; 
+  private final Board board; 
+  private boolean won;
+
+  public GameModel(IGrid grid) {
+    this.grid = grid;
+    this.board = new Board(grid);
+    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r');
+    this.won = false; 
+
+    grid.set(player.getCellPosition(), player.getChar());
+  }
+
+  /**
+   * Moves player by deltarows and deltacols
+   * 
+   * @param deltaRow how many rows the player is moved by
+   * @param deltaCol how many cols the player is moved by
+   * @return returns true if the move is allowed, and false otherwise
+   */
+  public boolean movePlayer (int deltaRow, int deltaCol) {
+    Player candidatePlayer = this.player.shiftPlayer(deltaRow, deltaCol);
+    
+    if (!this.isLegalPosition(candidatePlayer)) {
+      return false; 
+    }
+    grid.set(this.player.getCellPosition(), ' ');
+    this.player = candidatePlayer; 
+    grid.set(player.getCellPosition(), player.getChar());
+
+    won = isWon(candidatePlayer);
+    
+    return true; 
+  }
+
+  public boolean isWon(Player player) {
+    if (player.getCellPosition().row() == 0) {
+      return true; 
+    }
+    return false; 
+
+  }
+
+  /**
+   * Checks if the position the player wants to be moved to is available/legal
+   * 
+   * @param candidatePlayer the position where the player might be moved to 
+   * @return returns true if the move is legal, and false otherwise 
+   */
+  private boolean isLegalPosition (Player candidatePlayer) {
+    if (!this.board.positionIsOnGrid(candidatePlayer.getCellPosition())) {
+      return false; 
+    }
+    if (!this.board.isFree(candidatePlayer.getCellPosition())) {
+      return false; 
+    }
+    return true; 
+  }
+
+
+  public CellPosition getPlayerPosition(){
+    return this.player.getCellPosition();
+  }
+
+  public Player getPlayer() {
+    return this.player; 
+  }
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/model/IObstacle.java ===
+package no.uib.inf101.crossyroad.model;
+
+public interface IObstacle {
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/model/IRoad.java ===
+package no.uib.inf101.crossyroad.model;
+
+public interface IRoad {
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/model/IRoadFactory.java ===
+package no.uib.inf101.crossyroad.model;
+
+public interface IRoadFactory {
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/model/Player.java ===
+package no.uib.inf101.crossyroad.model;
+
+import no.uib.inf101.grid.CellPosition;
+
+public class Player {
+
+  private CellPosition pos; 
+  private final char chr; 
+  private Board board; 
+
+
+  public Player (CellPosition pos, char chr){
+    this.pos = pos;
+    this.chr = chr;
+  }
+
+  public Player shiftPlayer (int deltaRow, int deltaCol) {
+    int newRow = this.pos.row() + deltaRow;
+    int newCol = this.pos.col() + deltaCol;
+
+    return new Player(new CellPosition(newRow, newCol), chr);
+  }
+
+
+  public CellPosition getCellPosition(){
+    return pos;
+  }
+
+  public char getChar(){
+    return chr;
+  }
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/model/RandomRoadFactory.java ===
+package no.uib.inf101.crossyroad.model;
+
+public class RandomRoadFactory {
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/view/CellPositionToPixelConverter.java ===
+package no.uib.inf101.crossyroad.view;
+
+import java.awt.geom.Rectangle2D;
+
+import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.GridDimension;
+
+public class CellPositionToPixelConverter {
+
+    private Rectangle2D box;
+    private GridDimension gd;
+    private int margin;
+
+    public CellPositionToPixelConverter(Rectangle2D box, GridDimension gd, int margin){
+
+        this.box = box;
+        this.gd = gd;
+        this.margin = margin;
+    }
+
+    public Rectangle2D getBoundsOfCell(CellPosition pos){
+        double totWidth = box.getWidth();
+        double totHeight = box.getHeight();
+
+        int cols = gd.cols();
+        int rows = gd.rows();
+
+        double cellWidth = (totWidth - (margin * (cols - 1))) / cols;
+        double cellHeight = (totHeight - (margin * (rows - 1))) / rows;
+
+        double cellX = box.getX() + (cellWidth + margin) * pos.col();
+        double cellY = box.getY() + (cellHeight + margin) * pos.row();
+
+        return new Rectangle2D.Double(cellX, cellY, cellWidth, cellHeight);
+    }
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/view/ColorTheme.java ===
+package no.uib.inf101.crossyroad.view;
+
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ColorTheme{
+
+    Character color;
+    Map<Character,Color> colorCorrMap;
+
+    public ColorTheme(){
+        this.colorCorrMap = new HashMap<Character, Color>();
+        colorCorrMap = Map.of('r', 
+        Color.RED, 'g', 
+        Color.GREEN, 'y', 
+        Color.YELLOW,'b', 
+        Color.BLUE, ' ', 
+        Color.BLACK);
+    }
+
+    public Color getCellColor(Character c){
+        if(colorCorrMap.keySet().contains(c)){
+            return colorCorrMap.get(c);
+        }
+        else{
+            throw new IllegalArgumentException("Ingen tilgjengelige farger for dette tegnet");
+        }
+    }
+
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/view/GameView.java ===
+package no.uib.inf101.crossyroad.view;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+import javax.swing.JPanel;
+
+import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.GridCell;
+import no.uib.inf101.grid.IGrid;
+
+public class GameView extends JPanel{
+
+    private IGrid grid;
+    private ColorTheme farger;
+    private final int OUTERMARGIN = 20;
+    private final int INNERMARGIN = 2;
+    private Character color;
+
+    //konstruktør
+    public GameView(IGrid grid){
+        this.grid = grid;
+        this.farger = new ColorTheme();
+
+        //this.setPreferredSize(new Dimension(400, 400));
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        drawGrid(g2);
+    }
+
+    private void drawGrid(Graphics2D g2) {
+
+        double width = getWidth() - (OUTERMARGIN * 2);
+        double height = getHeight() - (OUTERMARGIN * 2);
+
+        double x = OUTERMARGIN;
+        double y = OUTERMARGIN;
+
+        Rectangle2D bakgrunn = new Rectangle2D.Double(x, y, width, height);
+
+        g2.setColor(Color.GRAY);
+        g2.fill(bakgrunn);
+
+        CellPositionToPixelConverter converter = new CellPositionToPixelConverter(bakgrunn, grid, INNERMARGIN);
+
+        drawCells(g2, converter, grid);
+    }
+
+    private void drawCells(Graphics2D g2, CellPositionToPixelConverter converter, IGrid grid2) {
+        for(GridCell cell : grid2){
+            CellPosition cellPos = cell.pos();
+            Rectangle2D cellArea = converter.getBoundsOfCell(cellPos);
+
+            Character colorSymbol = cell.symbol();
+
+            Color colorCell = farger.getCellColor(colorSymbol);
+
+            g2.setColor(colorCell);
+            g2.fill(cellArea);
+        }
+    }
+
+    public Dimension getPreferredSize() {
+        int cellSize = 40; 
+        int width  = grid.cols() * cellSize + OUTERMARGIN * 2;
+        int height = grid.rows() * cellSize + OUTERMARGIN * 2;
+
+        return new Dimension(width, height);
+    }
+    
+  }
+
+
+
+=== src/main/java/no/uib/inf101/crossyroad/view/Inf101Graphics.java ===
+package no.uib.inf101.crossyroad.view;
+
+// University of Bergen INF101 helper methods for graphics with Swing.
+// Methods for drawing images are adapted with permission from
+// https://kosbie.net/cmu/spring-08/15-100/handouts/DrawImageFromFile.java
+//
+// You may use this code freely. It is provided as-is, without any warranty.
+
+import javax.imageio.ImageIO;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Shape;
+import java.awt.geom.Dimension2D;
+import java.awt.image.BufferedImage;
+import java.awt.geom.Point2D;
+import java.awt.geom.AffineTransform;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
+
+public class Inf101Graphics {
+
+	//////////////////////////////////////
+	/// String helper methods
+	/////////////////////////////////////
+
+	/**
+	 * Draw a string centered at the given point.
+	 *
+	 * @param g The graphics context to draw on
+	 * @param s The string to draw
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 */
+	public static void drawCenteredString(Graphics g, String s, double x, double y) {
+		FontMetrics metrics = g.getFontMetrics();
+		double txtX = x - ((double) metrics.stringWidth(s)) / 2;
+		double txtY = y - ((double) metrics.getHeight()) / 2 + metrics.getAscent();
+		g.drawString(s, (int) Math.round(txtX), (int) Math.round(txtY));
+	}
+
+	/**
+	 * Draw a string centered at the given point.
+	 *
+	 * @param g The graphics context to draw on
+	 * @param s The string to draw
+	 * @param p The point on which to center the string
+	 */
+	public static void drawCenteredString(Graphics g, String s, Point2D p) {
+		Inf101Graphics.drawCenteredString(g, s, p.getX(), p.getY());
+	}
+
+	/**
+	 * Draw a string centered in the given rectangle. The string will be
+	 * vertically centered and horizontally centered with respect to the
+	 * given rectangle. If the string is too wide or to tall to fit in the
+	 * rectangle, it will overflow. If the width and the height are 0, the
+	 * string will be centered around the x and y coordinates.
+	 *
+	 * @param g      The graphics context to draw on
+	 * @param s      The string to draw
+	 * @param x      The left edge of the rectangle
+	 * @param y      The top edge of the rectangle
+	 * @param width  The width of the rectangle
+	 * @param height The height of the rectangle
+	 */
+	public static void drawCenteredString(Graphics g, String s, double x, double y,
+			double width, double height) {
+		drawCenteredString(g, s, x + width / 2, y + height / 2);
+	}
+
+	/**
+	 * Draw a string centered in the given shape. The string will be
+	 * vertically centered and horizontally centered with respect to the
+	 * bounding box of the shape. If the string is too wide or to tall to
+	 * fit within the bounds, it will overflow.
+	 *
+	 * @param g     The graphics context to draw on
+	 * @param s     The string to draw
+	 * @param shape in whose bounding box the string will be centered
+	 */
+	public static void drawCenteredString(Graphics g, String s, Shape shape) {
+		Inf101Graphics.drawCenteredString(g, s, shape.getBounds2D().getCenterX(),
+				shape.getBounds2D().getCenterY());
+	}
+
+	//////////////////////////////////////
+	/// Image helper methods
+	/////////////////////////////////////
+
+	/**
+	 * Draw the given image rotated and scaled with a top-left at x,y
+	 *
+	 * @param g       The graphics context to draw on
+	 * @param image   The image to draw
+	 * @param x       The x coordinate of the top-left corner
+	 * @param y       The y coordinate of the top-left corner
+	 * @param scale   The scale factor (1.0 is 100%)
+	 * @param radians The angle to rotate the image in radians
+	 */
+	public static void drawImage(Graphics g, Image image, double x, double y,
+			double scale, double radians) {
+		double imageWidth = image.getWidth(null);
+		double imageHeight = image.getHeight(null);
+		Dimension2D newSize = getImageSize(image, scale, radians);
+		AffineTransform transform = new AffineTransform();
+		transform.translate(x + newSize.getWidth() / 2, y + newSize.getHeight() / 2); // last (not first!)
+		transform.rotate(radians);
+		transform.scale(scale, scale);
+		transform.translate(-imageWidth / 2, -imageHeight / 2); // first
+		((Graphics2D) g).drawImage(image, transform, null);
+	}
+
+	/**
+	 * Draw the given image scaled with a top-left at x,y
+	 *
+	 * @param g     The graphics context to draw on
+	 * @param image The image to draw
+	 * @param x     The x coordinate of the top-left corner
+	 * @param y     The y coordinate of the top-left corner
+	 * @param scale The scale factor (1.0 is 100%)
+	 */
+	public static void drawImage(Graphics g, Image image, double x, double y,
+			double scale) {
+		Inf101Graphics.drawImage(g, image, x, y, scale, 0);
+	}
+
+	/**
+	 * Draw the given image rotated and scaled with a center at x,y
+	 *
+	 * @param g       The graphics context to draw on
+	 * @param image   The image to draw
+	 * @param cx      The x coordinate of the center
+	 * @param cy      The y coordinate of the center
+	 * @param scale   The scale factor (1.0 is 100%)
+	 * @param radians The angle to rotate the image in radians
+	 */
+	public static void drawCenteredImage(Graphics g, Image image, double cx, double cy,
+			double scale, double radians) {
+		Dimension2D newSize = getImageSize(image, scale, radians);
+		drawImage(g, image, cx - (newSize.getWidth()) / 2,
+				cy - (newSize.getHeight()) / 2, scale, radians);
+	}
+
+	/**
+	 * Draw the given image scaled with a center at x,y
+	 *
+	 * @param g     The graphics context to draw on
+	 * @param image The image to draw
+	 * @param cx    The x coordinate of the center
+	 * @param cy    The y coordinate of the center
+	 * @param scale The scale factor (1.0 is 100%)
+	 */
+	public static void drawCenteredImage(Graphics g, Image image, double cx, double cy,
+			double scale) {
+		Inf101Graphics.drawCenteredImage(g, image, cx, cy, scale, 0);
+	}
+
+	/**
+	 * Get the size of the (bounding box of the) image after it has been
+	 * scaled and rotated
+	 *
+	 * @param image   The image
+	 * @param scale   The scale factor (1.0 is 100%)
+	 * @param radians The angle to rotate the image in radians
+	 * @return The size of the (bounding box of) the image after it has been
+	 *         scaled and rotated
+	 */
+	public static Dimension2D getImageSize(Image image, double scale, double radians) {
+		double imageWidth = image.getWidth(null);
+		double imageHeight = image.getHeight(null);
+		AffineTransform transform = new AffineTransform();
+		transform.rotate(radians);
+		transform.scale(scale, scale);
+		transform.translate(-imageWidth / 2, -imageHeight / 2); // first
+		double[] x = { 0, imageWidth, imageWidth, 0 };
+		double[] y = { 0, 0, imageHeight, imageHeight };
+		double minx = 0, maxx = 0, miny = 0, maxy = 0;
+		Point2D.Double src = new Point2D.Double();
+		Point2D.Double dst = new Point2D.Double();
+		for (int i = 0; i < 4; i++) {
+			src.setLocation(x[i], y[i]);
+			transform.transform(src, dst);
+			if (i == 0) {
+				minx = maxx = dst.getX();
+				miny = maxy = dst.getY();
+			} else {
+				minx = Math.min(dst.getX(), minx);
+				miny = Math.min(dst.getY(), miny);
+				maxx = Math.max(dst.getX(), maxx);
+				maxy = Math.max(dst.getY(), maxy);
+			}
+		}
+		final double width = maxx - minx;
+		final double height = maxy - miny;
+		return new Dimension2D() {
+			@Override
+			public double getWidth() {
+				return width;
+			}
+
+			@Override
+			public double getHeight() {
+				return height;
+			}
+
+			@Override
+			public void setSize(double width, double height) {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
+	/**
+	 * Converts an image file into a BufferedImage. Note that in a maven
+	 * project, the requested image file must be in the src/main/resources
+	 * folder. It accepts most common image formats, such as jpg, png, etc.
+	 *
+	 * @param filename The name of the image file
+	 * @return The image as a BufferedImage
+	 * @throws RuntimeException if the image file is not found
+	 */
+	public static BufferedImage loadImageFromResources(String filename) {
+		if (!filename.startsWith("/")) {
+			filename = "/" + filename;
+		}
+		InputStream is = Inf101Graphics.class.getResourceAsStream(filename);
+		if (is == null) {
+			throw new RuntimeException("Could not find image file in resources: " + filename);
+		}
+		try {
+			return ImageIO.read(is);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Converts an image file into a BufferedImage.
+	 *
+	 * @param file A file object with location the image file
+	 * @return The image as a BufferedImage, or null if not found or not an image
+	 */
+	public static BufferedImage loadImageFromFile(File file) {
+		try {
+			return ImageIO.read(file);
+		} catch (IOException | IllegalArgumentException e) {
+			return null;
+		}
+	}
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/view/ViewPrinter.java ===
+package no.uib.inf101.crossyroad.view;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+
+public class ViewPrinter {
+
+	public static void savePanelAsImage(JPanel panel, String filePath) {
+		BufferedImage image = new BufferedImage(
+				panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = image.createGraphics();
+
+		panel.paint(g2d);
+		g2d.dispose();
+
+		try {
+			File file = new File(filePath);
+			ImageIO.write(image, "png", file);
+			System.out.println("Panel saved as: " + filePath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+=== src/main/java/no/uib/inf101/crossyroad/view/ViewableGameModel.java ===
+package no.uib.inf101.crossyroad.view;
+
+public interface ViewableGameModel {
+
+}
+
+=== src/main/java/no/uib/inf101/grid/CellPosition.java ===
+package no.uib.inf101.grid;
+
+
+public record CellPosition(int row, int col) {}
+
+
+=== src/main/java/no/uib/inf101/grid/Grid.java ===
+package no.uib.inf101.grid;
+
+import java.util.Iterator;
+
+import no.uib.inf101.grid.CellPosition;
+
+public class Grid implements IGrid{
+
+    //Character [][] grid;
+    Character [][] grid;
+    int rows; 
+    int cols;
+    
+    //konstruktør
+    public Grid(int rows, int cols){
+        if(rows < 0 || cols < 0){
+            throw new IllegalArgumentException();
+        }
+        this.rows = rows;
+        this.cols = cols;
+        this.grid = new Character[rows][cols];
+    }
+
+    public Grid(int rows, int cols, Character defaultValue){
+        this.rows = rows;
+        this.cols = cols;
+        this.grid = new Character[rows][cols];
+
+        //sette inn default value i alle plasser i grid
+
+        for(int r = 0; r < (grid.length); r++){
+            for(int c = 0; c < (grid[0].length); c++){
+                grid[r][c] = defaultValue;
+            }
+        }
+    }
+
+    @Override
+    public int rows() {
+        return rows;
+    }
+
+    @Override
+    public int cols() {
+    return cols;    
+    }
+
+    // public Iterable<CellPosition> position(){
+    //     return new Positions(this);
+    // }
+
+    @Override
+    public Iterator<GridCell> iterator() {
+        return new RowWiseGridIterator(this);
+    }
+    
+    @Override
+	public void set(CellPosition pos, Character symbol){
+        if(pos==null){
+            throw new IllegalArgumentException();
+        }
+        if(pos.row() >= grid.length || pos.row() < 0){
+            throw new IndexOutOfBoundsException();        }
+        if(pos.col() >= grid[0].length || pos.col() < 0){
+            throw new IndexOutOfBoundsException();
+        }
+        
+        grid[pos.row()][pos.col()] = symbol;
+    }
+
+	@Override
+	public Character get(CellPosition pos){
+        if(pos == null){
+            throw new IllegalArgumentException();
+        }
+        return grid[pos.row()][pos.col()];
+
+    }
+
+	@Override
+	public boolean positionIsOnGrid(CellPosition pos){
+        if(pos == null){
+            return false; 
+        }
+        if(pos.row() >= grid.length || pos.row() < 0){
+            return false;
+        }
+        if(pos.col() >= grid[0].length || pos.col() < 0){
+            return false;
+        }
+        
+        return true;
+
+    }
+
+}
+
+=== src/main/java/no/uib/inf101/grid/GridCell.java ===
+package no.uib.inf101.grid;
+
+import no.uib.inf101.grid.CellPosition;
+
+public record GridCell(CellPosition pos, Character symbol) {}
+
+=== src/main/java/no/uib/inf101/grid/GridDimension.java ===
+package no.uib.inf101.grid;
+
+public interface GridDimension {
+
+	/** Number of rows in the grid */
+	public int rows();
+
+	/** Number of columns in the grid */
+	public int cols();
+	
+}
+
+=== src/main/java/no/uib/inf101/grid/IGrid.java ===
+package no.uib.inf101.grid;
+
+import no.uib.inf101.grid.CellPosition;
+
+public interface IGrid extends GridDimension, Iterable<GridCell> {
+
+	/**
+	 * Sets the value of a position in the grid. A subsequent call to {@link #get}
+	 * with an equal position as argument will return the value which was set. The
+	 * method will overwrite any previous value that was stored at the location.
+	 * 
+	 * @param pos   the position in which to store the value
+	 * @param symbol the new value
+	 * @throws IndexOutOfBoundsException if the position does not exist in the grid
+	 */
+	public void set(CellPosition pos, Character symbol);
+
+	/**
+	 * Gets the current value at the given coordinate.
+	 * 
+	 * @param pos the position to get
+	 * @return the value stored at the position
+	 * @throws IndexOutOfBoundsException if the position does not exist in the grid
+	 */
+	public Character get(CellPosition pos);
+
+	/**
+	 * Reports whether the position is within bounds for this grid
+	 * 
+	 * @param pos position to check
+	 * @return true if the coordinate is within bounds, false otherwise
+	 */
+	public boolean positionIsOnGrid(CellPosition pos);//{
+
+}
+
+=== src/main/java/no/uib/inf101/grid/RowWiseGridIterator.java ===
+package no.uib.inf101.grid;
+
+import java.util.Iterator;
+
+import no.uib.inf101.grid.CellPosition;
+
+public class RowWiseGridIterator implements Iterator<GridCell>{
+
+    private CellPosition next;
+    private IGrid grid;
+
+    //konstruktør
+    public RowWiseGridIterator(IGrid grid){
+        this.next = new CellPosition(0, 0);
+        this.grid = grid;
+    }
+
+    @Override
+    public boolean hasNext() {
+        if(next.row() + 1 < 0){
+            throw new IllegalArgumentException("Row cannot be a negative number.");
+        }
+        if(next.col() + 1 < 0){
+            throw new IllegalArgumentException("Col cannot be a negative number.");
+        }
+        return next.row() + 1 <= grid.rows();
+    }
+
+    @Override
+    public GridCell next() {
+     
+        CellPosition posNow = next;
+
+        Character cellSymbol = grid.get(posNow);
+
+        if(next.col() + 1 < grid.cols()){
+            next = new CellPosition(posNow.row(), posNow.col() + 1);
+        }
+        else{
+            next = new CellPosition(next.row() + 1, 0);
+        }
+
+        GridCell cell = new GridCell(posNow, cellSymbol);
+
+        return cell;
+    } 
+
+}
+
+=== src/test/java/no/uib/inf101/GameModelTest.java ===
+package no.uib.inf101;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
+import no.uib.inf101.crossyroad.model.Board;
+import no.uib.inf101.crossyroad.model.GameModel;
+import no.uib.inf101.crossyroad.model.Player;
+import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.Grid;
+
+public class GameModelTest {
+
+  @Test
+  public void movePlayerTest() {
+    Grid grid = new Grid(10, 10, ' ');
+    GameModel model = new GameModel(grid);
+
+    Player player = new Player(new CellPosition(0, 0), 'r');
+
+    assertTrue(model.movePlayer(0, 1));
+    assertEquals(new CellPosition(0, 1), model.getPlayerPosition());
+  }
+
+}
+
+=== src/test/java/no/uib/inf101/sample/SimpleTest.java ===
+package no.uib.inf101.sample;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
+
+/**
+ * Unit test template.
+ */
+public class SimpleTest {
+
+	/**
+	 * Rigorous Test :-)
+	 */
+	@Test
+	public void shouldAnswerWithTrue() {
+		assertTrue(true);
+	}
+	
+}
+
