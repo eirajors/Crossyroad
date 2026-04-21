@@ -19,8 +19,12 @@ public interface ControllableGameModel {
   
   public Iterable<GridCell> getTiles();
   
+  public Iterable<GridCell> getBackgroundTiles();
+
   /**
    * @return returns the current gamestate
    */
   public GameState getGameState();
+
+
 }

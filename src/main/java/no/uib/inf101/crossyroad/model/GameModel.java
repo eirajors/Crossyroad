@@ -1,5 +1,7 @@
 package no.uib.inf101.crossyroad.model;
 
+import java.util.Random;
+
 import no.uib.inf101.crossyroad.controller.ControllableGameModel;
 import no.uib.inf101.crossyroad.view.ViewableGameModel;
 import no.uib.inf101.grid.CellPosition;
@@ -7,24 +9,34 @@ import no.uib.inf101.grid.GridCell;
 import no.uib.inf101.grid.GridDimension;
 import no.uib.inf101.grid.IGrid;
 
-public class GameModel implements ControllableGameModel, ViewableGameModel{
+public class GameModel implements ControllableGameModel, ViewableGameModel {
 
   private GameState gameState; 
   private IGrid grid;
+  private IGrid backgrounGrid;
   private Player player; 
   private final Board board; 
+  private final Board background; 
+  private Random random = new Random();
 
   /**
    * The constructor for the GameModel
    * @param grid initiates a gamemodel given a grid
    */
-  public GameModel(IGrid grid) {
+  public GameModel(IGrid grid, IGrid backgroundGrid) {
     this.grid = grid;
+    this.backgrounGrid = backgroundGrid;
+
     this.board = new Board(grid);
+    this.background = new Board(backgrounGrid);
+
     this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r');
     this.gameState = GameState.ACTIVE;
 
     grid.set(player.getCellPosition(), player.getChar());
+    new RoadFactory(backgroundGrid);
+    spawnObstacles(20);
+    
   }
 
   @Override
@@ -39,6 +51,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel{
       return false; 
     }
     grid.set(this.player.getCellPosition(), ' ');
+    
     this.player = candidatePlayer; 
     grid.set(player.getCellPosition(), player.getChar());
 
@@ -107,5 +120,35 @@ public class GameModel implements ControllableGameModel, ViewableGameModel{
   public Iterable<GridCell> getTiles() {
     return this.board;
   }
+
+  @Override
+  public Iterable<GridCell> getBackgroundTiles() {
+    return this.background; 
+  }
+
+  public boolean checkIsFree(CellPosition pos) {
+    return this.board.isFree(pos);
+  }
+
+  /**
+   * spawns the obstacles on the road (that are not able to move) 
+   * by setting the symbol on the grid for that obstacle
+   * 
+   * @param quantity how many obstacles to spawn
+   */
+  private void spawnObstacles(int quantity) {
+    int count = 0; 
+    for (count = 0; count < quantity;) {
+      int randRow = random.nextInt(grid.rows() -2) + 1; 
+      int randCol = random.nextInt(grid.cols()-2) + 1;
+
+      CellPosition posObs = new CellPosition(randRow, randCol);
+      if (backgrounGrid.get(posObs) == 'g') {
+        Log obs = new Log(posObs);
+        grid.set(posObs, obs.getChar());
+        count ++; 
+      }
+    }
+  } 
 
 }

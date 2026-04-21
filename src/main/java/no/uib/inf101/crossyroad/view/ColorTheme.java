@@ -14,9 +14,11 @@ public class ColorTheme{
         colorCorrMap = Map.of('r', 
         Color.RED, 'g', 
         Color.GREEN, 'y', 
-        Color.YELLOW,'b', 
+        Color.YELLOW,'l', 
         Color.BLUE, ' ', 
-        Color.BLACK);
+        new Color(0,0,0,0),
+        'b', new Color(139, 69, 19),
+        'e', Color.GRAY);
     }
 
     public Color getCellColor(Character c){

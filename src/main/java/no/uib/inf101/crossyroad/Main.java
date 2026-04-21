@@ -22,7 +22,8 @@ public class Main {
 		//frame.setSize(400, 400);
 		
 		IGrid grid = new Grid(15, 20, ' ');
-		GameModel model = new GameModel(grid);
+		IGrid backgroundGrid = new Grid(15, 20, ' ');
+		GameModel model = new GameModel(grid, backgroundGrid);
 
 		GameView view = new GameView();
 		GameController controller = new GameController(model, view);

@@ -18,10 +18,12 @@ public class GameView extends JPanel {
 
     private ColorTheme farger;
     private final int OUTERMARGIN = 20;
-    private final int INNERMARGIN = 2;
+    private final int INNERMARGIN = 0;
     private Iterable<GridCell> tiles;
+    private Iterable<GridCell> backgroundTiles;
     private GridDimension dimension;
     private GameState gameState;
+
     // private Character color;
 
     // konstruktør
@@ -29,10 +31,11 @@ public class GameView extends JPanel {
         this.farger = new ColorTheme();
     }
 
-    public void update(Iterable<GridCell> tiles, GridDimension dimension, GameState gameState) {
+    public void update(Iterable<GridCell> tiles, Iterable<GridCell> backgroundTiles, GridDimension dimension, GameState gameState) {
         this.tiles = tiles;
         this.dimension = dimension;
         this.gameState = gameState;
+        this.backgroundTiles = backgroundTiles; 
 
         repaint();
     }
@@ -64,16 +67,18 @@ public class GameView extends JPanel {
 
         Rectangle2D bakgrunn = new Rectangle2D.Double(x, y, width, height);
 
-        g2.setColor(Color.GRAY);
-        g2.fill(bakgrunn);
+        //g2.setColor(Color.GRAY);
+        //g2.fill(bakgrunn);
 
         CellPositionToPixelConverter converter = new CellPositionToPixelConverter(bakgrunn, dimension, INNERMARGIN);
 
+        drawCells(g2, converter, backgroundTiles);
         drawCells(g2, converter, tiles);
     }
 
     private void drawCells(Graphics2D g2, CellPositionToPixelConverter converter, Iterable<GridCell> tiles) {
         for (GridCell cell : tiles) {
+            
             CellPosition cellPos = cell.pos();
             Rectangle2D cellArea = converter.getBoundsOfCell(cellPos);
 

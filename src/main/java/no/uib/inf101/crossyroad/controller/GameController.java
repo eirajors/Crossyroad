@@ -20,7 +20,7 @@ public class GameController implements KeyListener {
   }
 
   public void updateView() {
-    view.update(model.getTiles(), model.getDimension(), model.getGameState());
+    view.update(model.getTiles(), model.getBackgroundTiles(), model.getDimension(), model.getGameState());
   }
 
   @Override
