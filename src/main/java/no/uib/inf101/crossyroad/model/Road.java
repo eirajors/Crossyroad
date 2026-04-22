@@ -42,6 +42,9 @@ public class Road {
    * @param grid the grid of the background
    */
   private void setColor(char colorSymbol, int row, IGrid grid) {
+    if (row == 0 || row == grid.rows()-1){
+      colorSymbol = 'g';
+    }
     for (GridCell cell : grid) {
       if (cell.pos().row() == row) {
         grid.set(cell.pos(), colorSymbol);

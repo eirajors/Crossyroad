@@ -6,10 +6,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import javax.swing.JPanel;
 
 import no.uib.inf101.crossyroad.model.GameState;
+import no.uib.inf101.crossyroad.model.obstacles.Car;
 import no.uib.inf101.grid.CellPosition;
 import no.uib.inf101.grid.GridCell;
 import no.uib.inf101.grid.GridDimension;
@@ -23,6 +25,7 @@ public class GameView extends JPanel {
     private Iterable<GridCell> backgroundTiles;
     private GridDimension dimension;
     private GameState gameState;
+    private List<Car> cars; 
 
     // private Character color;
 
@@ -31,11 +34,12 @@ public class GameView extends JPanel {
         this.farger = new ColorTheme();
     }
 
-    public void update(Iterable<GridCell> tiles, Iterable<GridCell> backgroundTiles, GridDimension dimension, GameState gameState) {
+    public void update(Iterable<GridCell> tiles, Iterable<GridCell> backgroundTiles, GridDimension dimension, GameState gameState, List<Car> cars) {
         this.tiles = tiles;
         this.dimension = dimension;
         this.gameState = gameState;
         this.backgroundTiles = backgroundTiles; 
+        this.cars = cars; 
 
         repaint();
     }
@@ -48,6 +52,9 @@ public class GameView extends JPanel {
         }
         Graphics2D g2 = (Graphics2D) g;
         drawGrid(g2);
+        if (cars != null) {
+            drawCars(g2);
+        }
 
         if (gameState == GameState.WON) {
             g2.setColor(new Color(0, 0, 0, 128));
@@ -105,5 +112,15 @@ public class GameView extends JPanel {
         int textWidth = g2.getFontMetrics().stringWidth(message);
         g2.drawString(message, (this.getWidth() / 2) - (textWidth / 2), this.getHeight() / 2 + 40);
 
+    }
+
+    private void drawCars(Graphics2D g2) {
+        int carWidth = (getHeight() - (OUTERMARGIN * 2))/ dimension.rows();
+        int carHeight = (getWidth() - (OUTERMARGIN * 2)) / dimension.cols();
+
+        for (Car car : cars) {
+            g2.setColor(Color.BLUE);
+            g2.fillRect(car.getX(), car.getY(), carWidth, carHeight);
+        }
     }
 }

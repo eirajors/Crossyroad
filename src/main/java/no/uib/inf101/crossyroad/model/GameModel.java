@@ -1,8 +1,12 @@
 package no.uib.inf101.crossyroad.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import no.uib.inf101.crossyroad.controller.ControllableGameModel;
+import no.uib.inf101.crossyroad.model.obstacles.Car;
+import no.uib.inf101.crossyroad.model.obstacles.Log;
 import no.uib.inf101.crossyroad.view.ViewableGameModel;
 import no.uib.inf101.grid.CellPosition;
 import no.uib.inf101.grid.GridCell;
@@ -14,7 +18,8 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   private GameState gameState; 
   private IGrid grid;
   private IGrid backgrounGrid;
-  private Player player; 
+  private Player player;
+  private List<Car> cars;
   private final Board board; 
   private final Board background; 
   private Random random = new Random();
@@ -31,6 +36,8 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.background = new Board(backgrounGrid);
 
     this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r');
+    this.cars = new ArrayList<>();
+    this.cars = spawnCars(20);
     this.gameState = GameState.ACTIVE;
 
     grid.set(player.getCellPosition(), player.getChar());
@@ -138,7 +145,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
    */
   private void spawnObstacles(int quantity) {
     int count = 0; 
-    for (count = 0; count < quantity;) {
+    for (count = 0; count <= quantity;) {
       int randRow = random.nextInt(grid.rows() -2) + 1; 
       int randCol = random.nextInt(grid.cols()-2) + 1;
 
@@ -150,5 +157,41 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
       }
     }
   } 
+
+  /**
+   * spawns cars that continuously moves across the screen 
+   * @param quantity
+   */
+  private List<Car> spawnCars(int quantity) {
+    for (int i = 0; i < quantity; i++) {
+      spawnCar();
+    }
+    return cars; 
+  }
+
+  @Override
+  public int getTimerDelayCars() {
+    return 10;
+  }
+
+
+  @Override
+  public void moveCars(int screenWidth) {
+    for (Car car : cars) {
+      car.move();
+    }
+    //cars.removeIf(car -> car.isOffScreen(screenWidth));
+  }
+
+  @Override
+  public void spawnCar() {
+    int y = 100; 
+    cars.add(new Car(-20, y, 2));
+  }
+
+  @Override
+  public List<Car> getCars() {
+    return cars;
+  }
 
 }

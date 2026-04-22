@@ -1,4 +1,4 @@
-package no.uib.inf101.crossyroad.model;
+package no.uib.inf101.crossyroad.model.obstacles;
 
 import java.util.ArrayList;
 

@@ -1,26 +1,45 @@
 package no.uib.inf101.crossyroad.controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
+
+import javax.swing.Timer;
 
 import no.uib.inf101.crossyroad.view.GameView;
 
-public class GameController implements KeyListener {
+public class GameController implements KeyListener, ActionListener {
 
   private final ControllableGameModel model;
   private final GameView view; 
+  private Random random;
+
+  private Timer timer; 
+
+  private int tickCount; 
+  private int spawnInterval;
 
   public GameController (ControllableGameModel model, GameView view) {
     this.model = model;
     this.view = view;
+    this.random = new Random(); 
+    this.timer = new Timer(model.getTimerDelayCars(), this);
+    this.tickCount = 0;
+    this.spawnInterval = 100;
+     
 
     this.view.addKeyListener(this);
     this.view.setFocusable(true);
     this.view.requestFocusInWindow();
+
+    this.timer.start();
+
   }
 
   public void updateView() {
-    view.update(model.getTiles(), model.getBackgroundTiles(), model.getDimension(), model.getGameState());
+    view.update(model.getTiles(), model.getBackgroundTiles(), model.getDimension(), model.getGameState(), model.getCars());
   }
 
   @Override
@@ -50,5 +69,21 @@ public class GameController implements KeyListener {
 
   @Override
   public void keyReleased(KeyEvent e) {}
+
+  @Override
+  public void actionPerformed(ActionEvent a) {
+    model.moveCars(view.getWidth()); 
+
+    tickCount++; 
+    if (tickCount >= spawnInterval) {
+      model.spawnCar();
+      tickCount = 0; 
+      spawnInterval = random.nextInt((500 - 30) + 1) + 30;
+    }
+
+    this.view.repaint();
+    updateView();
+  }
+
 
 }
