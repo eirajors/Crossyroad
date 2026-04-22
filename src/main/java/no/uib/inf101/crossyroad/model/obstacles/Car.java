@@ -13,8 +13,11 @@ public class Car {
     this.speedX = speedX; 
   }
 
-  public void move() {
+  public boolean move() {
     x += speedX; 
+
+    return true; 
+    // sjekke her om koordinatene den er på er ledig. hvis ikke returnere false. 
   }
 
   public int getX() {
@@ -31,4 +34,6 @@ public class Car {
     }
     return false;
   }
+
+  
 }

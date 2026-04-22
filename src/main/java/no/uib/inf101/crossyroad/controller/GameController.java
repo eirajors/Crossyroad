@@ -76,12 +76,12 @@ public class GameController implements KeyListener, ActionListener {
 
     tickCount++; 
     if (tickCount >= spawnInterval) {
-      model.spawnCar();
+      model.spawnCar(view.getWidth(), view.getHeight());
       tickCount = 0; 
       spawnInterval = random.nextInt((500 - 30) + 1) + 30;
     }
 
-    this.view.repaint();
+    //this.view.repaint();
     updateView();
   }
 

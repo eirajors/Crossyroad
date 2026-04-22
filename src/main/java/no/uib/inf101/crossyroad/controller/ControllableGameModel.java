@@ -40,7 +40,7 @@ public interface ControllableGameModel {
   /**
    * spawns a new car in the grid
    */
-  public void spawnCar();
+  public void spawnCar(int screenWidth, int screeenHeight);
 
   public List<Car> getCars();
 

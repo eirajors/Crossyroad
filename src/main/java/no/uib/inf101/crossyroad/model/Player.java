@@ -21,7 +21,6 @@ public class Player {
     return new Player(new CellPosition(newRow, newCol), chr);
   }
 
-
   public CellPosition getCellPosition(){
     return pos;
   }
@@ -29,4 +28,5 @@ public class Player {
   public char getChar(){
     return chr;
   }
+
 }

@@ -20,6 +20,8 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   private IGrid backgrounGrid;
   private Player player;
   private List<Car> cars;
+  //private int PlayerX;
+  //private int PlayerY; 
   private final Board board; 
   private final Board background; 
   private Random random = new Random();
@@ -37,7 +39,6 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
 
     this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r');
     this.cars = new ArrayList<>();
-    this.cars = spawnCars(20);
     this.gameState = GameState.ACTIVE;
 
     grid.set(player.getCellPosition(), player.getChar());
@@ -158,22 +159,18 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     }
   } 
 
-  /**
-   * spawns cars that continuously moves across the screen 
-   * @param quantity
-   */
-  private List<Car> spawnCars(int quantity) {
-    for (int i = 0; i < quantity; i++) {
-      spawnCar();
-    }
-    return cars; 
-  }
+
+  // private List<Car> spawnCars(int quantity) {
+  //   for (int i = 0; i < quantity; i++) {
+  //     spawnCar(i);
+  //   }
+  //   return cars; 
+  // }
 
   @Override
   public int getTimerDelayCars() {
     return 10;
   }
-
 
   @Override
   public void moveCars(int screenWidth) {
@@ -184,8 +181,23 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   }
 
   @Override
-  public void spawnCar() {
-    int y = 100; 
+  public void spawnCar(int screenWidth, int screenHeight) {
+    int cellWidth = screenWidth / board.rows(); 
+    int cellHeight = screenHeight / board.rows(); 
+
+    boolean found = false; 
+    int randomHighway = 0; 
+
+    // hvis koordinatet i den cellen er highway kan man spawne bil
+    // bilens sentrum er kolonner * cellebredde - eller + vet ikke 0.5 cellebredde 
+    while (!found){
+      randomHighway = random.nextInt((board.rows()) + 1);
+      if (backgrounGrid.get(new CellPosition(randomHighway, 0)) == 'e') {
+        found = true;
+      }
+    }
+    int y = randomHighway * cellHeight; 
+
     cars.add(new Car(-20, y, 2));
   }
 
@@ -194,4 +206,9 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return cars;
   }
 
+  // public Coordinate getPlayerCoordinate() {
+  //   int playerX = this.getPlayerPosition().col() + (view.getWidth());
+  // }
 }
+
+

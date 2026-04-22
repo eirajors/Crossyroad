@@ -123,4 +123,5 @@ public class GameView extends JPanel {
             g2.fillRect(car.getX(), car.getY(), carWidth, carHeight);
         }
     }
+
 }
