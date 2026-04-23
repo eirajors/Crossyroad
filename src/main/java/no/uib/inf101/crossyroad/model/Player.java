@@ -9,7 +9,6 @@ public class Player {
   private CellPosition pos; 
   private final char chr; 
   private Board board; 
-  private Coordinate coordinates;
   private JFrame frame; 
 
 
@@ -39,23 +38,16 @@ public class Player {
     return this.frame.getWidth() / this.board.cols();
   }
 
-  private int playerHeight() {
+  public int playerHeight() {
     return this.frame.getHeight() / this.board.rows(); 
   }
 
-  // private Coordinate playerCoordinate() {
-  //   int playerX = ((frame.getWidth() / this.board.cols()) * pos.col()) - (this.playerWidth() / 2);
-  //   int playerY = ((frame.getHeight() / this.board.rows()) * pos.row()) - (this.playerHeight() / 2);
-
-  //   return new Coordinate(playerX, playerY);
-  // }
-
   private int getPlayerCenterX() {
-    return ((frame.getWidth() / this.board.cols()) * pos.col()) - (this.playerWidth() / 2);
+    return ((frame.getWidth() / this.board.cols()) * pos.col()) + (this.playerWidth() / 2);
   }
 
   private int getPlayerCenterY() {
-    return ((frame.getHeight() / this.board.rows()) * pos.row()) - (this.playerHeight() / 2);
+    return ((frame.getHeight() / this.board.rows()) * pos.row()) + (this.playerHeight() / 2);
  
   }
 

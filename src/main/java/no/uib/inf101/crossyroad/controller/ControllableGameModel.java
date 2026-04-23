@@ -18,10 +18,22 @@ public interface ControllableGameModel {
    */
   public boolean movePlayer(int deltaRow, int deltaCol);
 
+  /**
+   * 
+   * @return
+   */
   public GridDimension getDimension();
   
+  /**
+   * 
+   * @return
+   */
   public Iterable<GridCell> getTiles();
 
+  /**
+   * 
+   * @return
+   */
   public Iterable<GridCell> getBackgroundTiles();
 
   /**
@@ -35,6 +47,12 @@ public interface ControllableGameModel {
    */
   public int getTimerDelayCars();
 
+  /**
+   * Iterates through a list cars, and each car across the board. 
+   * When a car reaches the end of the board, it gets removed from the list
+   * 
+   * @param width the width of the screen 
+   */
   public void moveCars(int width);
 
   /**
@@ -42,6 +60,10 @@ public interface ControllableGameModel {
    */
   public void spawnCar(int screenWidth, int screeenHeight);
 
+  /**
+   * 
+   * @return
+   */
   public List<Car> getCars();
 
 

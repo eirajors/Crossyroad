@@ -19,11 +19,10 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
 
   private GameState gameState; 
   private IGrid grid;
-  private IGrid backgrounGrid;
+  private IGrid backgroundGrid;
   private Player player;
   private List<Car> cars;
-  //private int PlayerX;
-  //private int PlayerY; 
+
   private final Board board; 
   private final Board background; 
   private Random random = new Random();
@@ -35,17 +34,17 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
    */
   public GameModel(IGrid grid, IGrid backgroundGrid, JFrame frame) {
     this.grid = grid;
-    this.backgrounGrid = backgroundGrid;
+    this.backgroundGrid = backgroundGrid;
     this.frame = frame; 
 
     this.board = new Board(grid);
-    this.background = new Board(backgrounGrid);
+    this.background = new Board(this.backgroundGrid);
 
-    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', board, this.frame);
+    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board, this.frame);
     this.cars = new ArrayList<>();
     this.gameState = GameState.ACTIVE;
 
-    grid.set(player.getCellPosition(), player.getChar());
+    this.grid.set(player.getCellPosition(), player.getChar());
     new RoadFactory(backgroundGrid);
     spawnObstacles(20);
         
@@ -138,10 +137,6 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return this.background; 
   }
 
-  public boolean checkIsFree(CellPosition pos) {
-    return this.board.isFree(pos);
-  }
-
   /**
    * spawns the obstacles on the road (that are not able to move) 
    * by setting the symbol on the grid for that obstacle
@@ -155,7 +150,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
       int randCol = random.nextInt(grid.cols()-2) + 1;
 
       CellPosition posObs = new CellPosition(randRow, randCol);
-      if (backgrounGrid.get(posObs) == 'g') {
+      if (backgroundGrid.get(posObs) == 'g') {
         Log obs = new Log(posObs);
         grid.set(posObs, obs.getChar());
         count ++; 
@@ -164,13 +159,6 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   } 
 
 
-  // private List<Car> spawnCars(int quantity) {
-  //   for (int i = 0; i < quantity; i++) {
-  //     spawnCar(i);
-  //   }
-  //   return cars; 
-  // }
-
   @Override
   public int getTimerDelayCars() {
     return 10;
@@ -178,15 +166,19 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
 
   @Override
   public void moveCars(int screenWidth) {
+    List<Car> toRemove = new ArrayList<>();
     for (Car car : cars) {
       car.move();
       //sjekke kræsj pr bil
       if(checkCrash(car)) {
         gameState = GameState.WON;
       }
+      if (car.isOffScreen(screenWidth)) {
+        toRemove.add(car);
+        }
     }
+    cars.removeAll(toRemove);
     
-    cars.removeIf(car -> car.isOffScreen(screenWidth));
   }
 
   @Override
@@ -200,11 +192,11 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     // bilens sentrum er kolonner * cellebredde - eller + vet ikke 0.5 cellebredde 
     while (!found){
       randomHighway = random.nextInt((board.rows()));
-      if (backgrounGrid.get(new CellPosition(randomHighway, 0)) == 'e') {
+      if (backgroundGrid.get(new CellPosition(randomHighway, 0)) == 'e') {
         found = true;
       }
     }
-    int y = randomHighway * cellHeight ; 
+    int y = randomHighway * cellHeight; 
 
     int speedX = random.nextInt(8 - 2 + 1) + 2;
 
@@ -216,25 +208,27 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return cars;
   }
 
-  // public Coordinate getPlayerCoordinate() {
-  //   int playerX = this.getPlayerPosition().col() + (view.getWidth());
-  // }
-
-
-  // metode sjekke om kræsj
-
+  /***
+   * Method to check if a car crashes with the player
+   * 
+   * @param car the car to check for crashing with the player
+   * @return true if it crashes with the player, false otherwise
+   */
   private boolean checkCrash(Car car) {
     int carWidth = frame.getWidth() / board.cols(); 
     int carHeight = frame.getHeight() / board.rows(); 
-    int carXR = car.getX() + carWidth/2; 
-    int carXL = car.getX() - carWidth/2; 
-    int carYB = car.getY() + carHeight/2; 
-    int carYT = car.getY() - carHeight/2;
+    int carXR = car.getX() + carWidth; 
+    int carXL = car.getX(); 
+    int carYB = car.getY() + carHeight; 
+    int carYT = car.getY();
 
-    if ((carXR >= player.getPlayerLeftX() && carXL <= player.getPlayerRightX()) && (carYB >= player.getPlayerTopY() && carYT <= player.getPlayerBottomY())) {
-      return true; 
+    if (carXR < player.getPlayerLeftX() + player.playerWidth() /2 || (player.getPlayerRightX() - player.playerWidth()/2) < carXL){
+      return false; 
     }
-    return false; 
+    else if (carYT > (player.getPlayerBottomY() - player.playerHeight()/2) || (player.getPlayerTopY() + player.playerHeight()/2) > carYB) {
+      return false; 
+    }
+    return true; 
   }
 }
 

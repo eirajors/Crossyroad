@@ -8,6 +8,7 @@ import java.util.Random;
 
 import javax.swing.Timer;
 
+import no.uib.inf101.crossyroad.model.GameState;
 import no.uib.inf101.crossyroad.view.GameView;
 
 public class GameController implements KeyListener, ActionListener {
@@ -72,16 +73,17 @@ public class GameController implements KeyListener, ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent a) {
-    model.moveCars(view.getWidth()); 
+    if (model.getGameState() == GameState.ACTIVE) {
+      model.moveCars(view.getWidth()); 
 
-    tickCount++; 
-    if (tickCount >= spawnInterval) {
-      model.spawnCar(view.getWidth(), view.getHeight());
-      tickCount = 0; 
-      spawnInterval = random.nextInt((500 - 30) + 1) + 30;
+      tickCount++; 
+      if (tickCount >= spawnInterval) {
+        model.spawnCar(view.getWidth(), view.getHeight());
+        tickCount = 0; 
+        spawnInterval = random.nextInt((80 - 30) + 1) + 30;
+      }
+      updateView();
     }
-    //this.view.repaint();
-    updateView();
   }
 
   
