@@ -18,6 +18,7 @@ public class Board implements Iterable<GridCell>, GridDimension {
    * @param grid the grid used to create the board
    */
   public Board(IGrid grid) {
+    if (grid == null) throw new NullPointerException("Kan ikke være null"); 
     this.grid = grid;
   }
   
@@ -29,7 +30,7 @@ public class Board implements Iterable<GridCell>, GridDimension {
    * @param cols the number of columns 
    */
   public Board(int rows, int cols) {
-    this(new Grid(rows, cols, '-'));
+    this(new Grid(rows, cols, ' '));
   }
 
   @Override

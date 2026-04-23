@@ -17,9 +17,9 @@ import no.uib.inf101.grid.GridCell;
 import no.uib.inf101.grid.GridDimension;
 
 public class GameView extends JPanel {
-
+    //fjerne outermargin
     private ColorTheme farger;
-    private final int OUTERMARGIN = 20;
+    private final int OUTERMARGIN = 0;
     private final int INNERMARGIN = 0;
     private Iterable<GridCell> tiles;
     private Iterable<GridCell> backgroundTiles;

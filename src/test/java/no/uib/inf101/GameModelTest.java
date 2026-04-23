@@ -19,7 +19,7 @@ public class GameModelTest {
     IGrid grid = new Grid(10, 10, ' ');
     IGrid backGrid = new Grid(10, 10, ' ');
 
-    GameModel model = new GameModel(grid, backGrid);
+    GameModel model = new GameModel(grid, backGrid, null);
 
     CellPosition posNow = model.getPlayer().getCellPosition();
 
@@ -36,7 +36,7 @@ public class GameModelTest {
     IGrid grid = new Grid(10, 10, ' ');
     IGrid backGrid = new Grid(10, 10, ' ');
 
-    GameModel model = new GameModel(grid, backGrid);
+    GameModel model = new GameModel(grid, backGrid, null);
 
     assertEquals(model.getGameState(), GameState.ACTIVE);
 

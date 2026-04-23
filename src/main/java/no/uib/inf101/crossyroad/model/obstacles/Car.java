@@ -16,6 +16,8 @@ public class Car {
   public boolean move() {
     x += speedX; 
 
+    System.out.println(x);
+
     return true; 
     // sjekke her om koordinatene den er på er ledig. hvis ikke returnere false. 
   }

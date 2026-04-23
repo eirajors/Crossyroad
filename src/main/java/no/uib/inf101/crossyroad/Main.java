@@ -23,7 +23,7 @@ public class Main {
 		
 		IGrid grid = new Grid(15, 20, ' ');
 		IGrid backgroundGrid = new Grid(15, 20, ' ');
-		GameModel model = new GameModel(grid, backgroundGrid);
+		GameModel model = new GameModel(grid, backgroundGrid, frame);
 
 		GameView view = new GameView();
 		GameController controller = new GameController(model, view);
