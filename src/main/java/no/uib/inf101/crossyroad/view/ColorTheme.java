@@ -18,7 +18,9 @@ public class ColorTheme{
         Color.BLUE, ' ', 
         new Color(0,0,0,0),
         'b', new Color(139, 69, 19),
-        'e', Color.GRAY);
+        'e', Color.GRAY,
+    'd', new Color(0, 100, 0),
+    's', Color.GRAY);
     }
 
     public Color getCellColor(Character c){

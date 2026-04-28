@@ -25,13 +25,16 @@ public class GameView extends JPanel {
     private Iterable<GridCell> backgroundTiles;
     private GridDimension dimension;
     private GameState gameState;
+    private ViewableGameModel model; 
     private List<Car> cars; 
+    private int level; 
 
     // private Character color;
 
     // konstruktør
-    public GameView() {
+    public GameView(ViewableGameModel model) {
         this.farger = new ColorTheme();
+        this.model = model; 
     }
 
     public void update(Iterable<GridCell> tiles, Iterable<GridCell> backgroundTiles, GridDimension dimension, GameState gameState, List<Car> cars) {
@@ -61,6 +64,13 @@ public class GameView extends JPanel {
             Rectangle2D rect = new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight());
             g2.fill(rect);
             drawMessage(g2, "Du vant!");
+        }
+
+        if (gameState == GameState.GAMEOVER) {
+            g2.setColor(new Color(0, 0, 0, 128));
+            Rectangle2D rect = new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight());
+            g2.fill(rect);
+            drawMessage(g2, "GAME OVER");
         }
     }
 

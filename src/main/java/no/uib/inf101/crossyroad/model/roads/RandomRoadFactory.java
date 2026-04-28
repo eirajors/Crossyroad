@@ -1,25 +1,24 @@
-package no.uib.inf101.crossyroad.model;
+package no.uib.inf101.crossyroad.model.roads;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import no.uib.inf101.grid.IGrid;
 
-public class RoadFactory {
+public class RandomRoadFactory {
 
   private final Random random = new Random();
   private IGrid backgroundGrid; 
    
 
-  public RoadFactory(IGrid backgroundGrid) {
+  public RandomRoadFactory(IGrid backgroundGrid) {
     this.backgroundGrid = backgroundGrid;
     
-    fillGrid(backgroundGrid);
+    fillGrid(this.backgroundGrid);
   }
 
   private String getNext() {
-    List<String> roads = List.of("grass", "highway");
+    List<String> roads = List.of("grass", "highway", "highwayRight");
 
     int index = random.nextInt(roads.size());
 

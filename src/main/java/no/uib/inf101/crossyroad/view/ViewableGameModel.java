@@ -9,4 +9,15 @@ public interface ViewableGameModel {
 
   public Iterable<GridCell> getTiles();
 
+  /**
+   * 
+   * @return
+   */
+  public Iterable<GridCell> getBackgroundTiles();
+
+  /** 
+   * @return returns the current level
+   */
+  public int getLevel();
+
 }

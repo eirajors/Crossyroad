@@ -8,9 +8,12 @@ import javax.swing.JFrame;
 
 import no.uib.inf101.crossyroad.controller.ControllableGameModel;
 import no.uib.inf101.crossyroad.model.obstacles.Car;
-import no.uib.inf101.crossyroad.model.obstacles.Log;
+import no.uib.inf101.crossyroad.model.obstacles.CarFunctionality;
+import no.uib.inf101.crossyroad.model.obstacles.Obstacle;
+import no.uib.inf101.crossyroad.model.roads.RandomRoadFactory;
 import no.uib.inf101.crossyroad.view.ViewableGameModel;
 import no.uib.inf101.grid.CellPosition;
+import no.uib.inf101.grid.Grid;
 import no.uib.inf101.grid.GridCell;
 import no.uib.inf101.grid.GridDimension;
 import no.uib.inf101.grid.IGrid;
@@ -22,11 +25,13 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   private IGrid backgroundGrid;
   private Player player;
   private List<Car> cars;
+  //private CarFunctionality carFunctionality; 
 
-  private final Board board; 
-  private final Board background; 
+  private Board board; 
+  private Board background; 
   private Random random = new Random();
   private JFrame frame; 
+  private int level; 
 
   /**
    * The constructor for the GameModel
@@ -43,11 +48,29 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board, this.frame);
     this.cars = new ArrayList<>();
     this.gameState = GameState.ACTIVE;
+    this.level = 0; 
 
     this.grid.set(player.getCellPosition(), player.getChar());
-    new RoadFactory(backgroundGrid);
+    new RandomRoadFactory(backgroundGrid);
+    //this.carFunctionality = new CarFunctionality(backgroundGrid, cars, frame, this.board.rows(), this.board.cols(), player);
+    spawnObstacles(20);     
+  }
+
+  /**
+   * A method to create a new board, background, cars and obstacles when a 
+   * player reaches the other side
+   */
+  private void newRound() {
+    this.grid = new Grid(15, 20, ' ');
+    this.backgroundGrid = new Grid(15, 20, ' ');
+    this.board = new Board(this.grid);
+    this.background = new Board(this.backgroundGrid);
+    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board, this.frame);
+    this.level++; 
+    this.cars.clear();
+    this.grid.set(getPlayerPosition(), player.getChar());
+    new RandomRoadFactory(backgroundGrid);
     spawnObstacles(20);
-        
   }
 
   @Override
@@ -67,16 +90,17 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     grid.set(player.getCellPosition(), player.getChar());
 
     if (isWon(this.player)) {
-      gameState = GameState.WON; 
+      this.newRound(); 
     }
     
     return true; 
   }
 
   /**
+   * Checks if the player has arrived at the other side of the board
    * 
-   * @param player
-   * @return
+   * @param player checks the position of the player
+   * @return returns true if the player is on the other side, and false otherwise
    */
   private boolean isWon(Player player) {
     if (player.getCellPosition().row() == 0) {
@@ -107,17 +131,12 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return true; 
   }
 
-  /**
-   * 
-   * @return returns the current cellposition of the player
-   */
+  @Override
   public CellPosition getPlayerPosition(){
     return this.player.getCellPosition();
   }
 
-  /**
-   * @return returns the player
-   */
+  @Override
   public Player getPlayer() {
     return this.player; 
   }
@@ -137,11 +156,17 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return this.background; 
   }
 
+  @Override
+  public int getLevel() {
+    return this.level; 
+  }
+
   /**
    * spawns the obstacles on the road (that are not able to move) 
    * by setting the symbol on the grid for that obstacle
    * 
    * @param quantity how many obstacles to spawn
+   * @throws char if an object is without a character
    */
   private void spawnObstacles(int quantity) {
     int count = 0; 
@@ -151,13 +176,16 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
 
       CellPosition posObs = new CellPosition(randRow, randCol);
       if (backgroundGrid.get(posObs) == 'g') {
-        Log obs = new Log(posObs);
+        Obstacle obs = new Obstacle(posObs);
+        char o = obs.getChar();
+        if (o == ' '){
+          throw new IllegalArgumentException("Character for an obstacle can not be empty.");
+        }
         grid.set(posObs, obs.getChar());
         count ++; 
       }
     }
   } 
-
 
   @Override
   public int getTimerDelayCars() {
@@ -168,14 +196,37 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   public void moveCars(int screenWidth) {
     List<Car> toRemove = new ArrayList<>();
     for (Car car : cars) {
-      car.move();
+      boolean crash = false; 
+
+      for (Car car2 : cars) {
+        if (car == car2) continue; 
+        if (car.getY() != car2.getY()) continue;
+        if (car.getSpeed() > 0) {
+          if (car2.getX() < car.getX()) continue; 
+          if (car.getX() + car.getWidth() > car2.getX() - 20) {
+            crash = true; 
+            break;
+          }
+        }
+        else {
+          if (car.getX() < car2.getX()) continue;
+          if (car.getX() < car2.getX() + car2.getWidth() + 20) {
+            crash = true; 
+            break;
+          }
+        }
+      }
+
+      if(!crash){
+        car.move();
+      }
       //sjekke kræsj pr bil
       if(checkCrash(car)) {
-        gameState = GameState.WON;
+        gameState = GameState.GAMEOVER;
       }
       if (car.isOffScreen(screenWidth)) {
         toRemove.add(car);
-        }
+      }
     }
     cars.removeAll(toRemove);
     
@@ -187,20 +238,31 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
 
     boolean found = false; 
     int randomHighway = 0; 
+    Character highwayChar = null; 
 
     // hvis koordinatet i den cellen er highway kan man spawne bil
     // bilens sentrum er kolonner * cellebredde - eller + vet ikke 0.5 cellebredde 
     while (!found){
       randomHighway = random.nextInt((board.rows()));
-      if (backgroundGrid.get(new CellPosition(randomHighway, 0)) == 'e') {
+      if (backgroundGrid.get(new CellPosition(randomHighway, 0)) == 'e' || backgroundGrid.get(new CellPosition(randomHighway, 0)) == 's' ) {
+        highwayChar = backgroundGrid.get(new CellPosition(randomHighway, 0));
         found = true;
       }
     }
     int y = randomHighway * cellHeight; 
 
     int speedX = random.nextInt(8 - 2 + 1) + 2;
-
-    cars.add(new Car(-40, y, speedX));
+    if (highwayChar.equals('e')){
+      
+      cars.add(new Car(y, speedX, screenWidth, screenHeight, board.rows(), board.cols()));
+    }
+    else if (highwayChar.equals('s')) {
+      speedX = speedX * -1;
+      cars.add(new Car(y, speedX, screenWidth, screenHeight, board.rows(), board.cols()));
+    }
+    else {
+      throw new IllegalArgumentException("The while-loop has not chosen a highway to spawn a car");
+    }
   }
 
   @Override
@@ -230,6 +292,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     }
     return true; 
   }
+
 }
 
 

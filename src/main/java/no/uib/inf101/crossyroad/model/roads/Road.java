@@ -1,4 +1,4 @@
-package no.uib.inf101.crossyroad.model;
+package no.uib.inf101.crossyroad.model.roads;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +7,7 @@ import no.uib.inf101.grid.GridCell;
 import no.uib.inf101.grid.IGrid;
 
 public class Road {
-  private final List<String> ROAD_STYLES = List.of("grass", "highway");
+  private final List<String> ROAD_STYLES = List.of("grass", "highway", "highwayRight");
 
   private final String typeRoad; 
   private IGrid grid; 
@@ -18,6 +18,7 @@ public class Road {
   static {
     FARGER.put("grass", 'g'); 
     FARGER.put("highway", 'e');
+    FARGER.put("highwayRight", 's');
   }
 
   public Road(String typeRoad, int row, IGrid grid) {
@@ -25,13 +26,13 @@ public class Road {
     this.row = row; 
     this.grid = grid; 
 
-    if (!ROAD_STYLES.contains(typeRoad)) {
-      throw new IllegalArgumentException("Wrong argument. It should be 'grass' or 'highway''" ); 
+    if (!ROAD_STYLES.contains(this.typeRoad)) {
+      throw new IllegalArgumentException("Wrong argument. It should be 'grass', 'highway' or 'highwayRight'" ); 
     }
 
-    char color = FARGER.get(typeRoad);
+    char color = FARGER.get(this.typeRoad);
 
-    setColor(color, row, grid);
+    setColor(color, this.row, this.grid);
   }
 
   /**
@@ -42,12 +43,12 @@ public class Road {
    * @param grid the grid of the background
    */
   private void setColor(char colorSymbol, int row, IGrid grid) {
-    if (row == 0 || row == grid.rows()-1){
+    if (this.row == 0 || this.row == this.grid.rows()-1){
       colorSymbol = 'g';
     }
     for (GridCell cell : grid) {
       if (cell.pos().row() == row) {
-        grid.set(cell.pos(), colorSymbol);
+        this.grid.set(cell.pos(), colorSymbol);
       }
     }
   }

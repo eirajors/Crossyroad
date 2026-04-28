@@ -19,13 +19,12 @@ public class Main {
 		frame.setResizable(true);
 		frame.setLocationRelativeTo(null);
 		frame.setLayout(new java.awt.BorderLayout());
-		//frame.setSize(400, 400);
 		
 		IGrid grid = new Grid(15, 20, ' ');
 		IGrid backgroundGrid = new Grid(15, 20, ' ');
 		GameModel model = new GameModel(grid, backgroundGrid, frame);
 
-		GameView view = new GameView();
+		GameView view = new GameView(model);
 		GameController controller = new GameController(model, view);
 		controller.updateView();
 

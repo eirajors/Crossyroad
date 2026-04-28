@@ -28,7 +28,7 @@ public class GameController implements KeyListener, ActionListener {
     this.random = new Random(); 
     this.timer = new Timer(model.getTimerDelayCars(), this);
     this.tickCount = 0;
-    this.spawnInterval = 100;
+    this.spawnInterval = 70;
      
 
     this.view.addKeyListener(this);
@@ -49,18 +49,20 @@ public class GameController implements KeyListener, ActionListener {
   @Override
   public void keyPressed(KeyEvent e) {
 
-    if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-      this.model.movePlayer(0, -1);
-    }
-    else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-      this.model.movePlayer(0, 1);
-    }
-    else if (e.getKeyCode() == KeyEvent.VK_UP) {
-      this.model.movePlayer(-1, 0);
+    if (model.getGameState() == GameState.ACTIVE) {
+      if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        this.model.movePlayer(0, -1);
+      }
+      else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        this.model.movePlayer(0, 1);
+      }
+      else if (e.getKeyCode() == KeyEvent.VK_UP) {
+        this.model.movePlayer(-1, 0);
 
-    }
-    else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-      this.model.movePlayer(1, 0);
+      }
+      else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        this.model.movePlayer(1, 0);
+      }
     }
 
     this.view.repaint();
@@ -80,12 +82,10 @@ public class GameController implements KeyListener, ActionListener {
       if (tickCount >= spawnInterval) {
         model.spawnCar(view.getWidth(), view.getHeight());
         tickCount = 0; 
-        spawnInterval = random.nextInt((80 - 30) + 1) + 30;
+        spawnInterval = random.nextInt((80 - 30) + 1);
       }
       updateView();
     }
-  }
-
-  
+  }  
 
 }
