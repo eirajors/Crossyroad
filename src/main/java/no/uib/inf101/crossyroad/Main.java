@@ -16,7 +16,7 @@ public class Main {
 		JFrame frame = new JFrame("Cross the grid");
 
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(true);
+		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setLayout(new java.awt.BorderLayout());
 		
