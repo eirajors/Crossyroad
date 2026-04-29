@@ -42,19 +42,19 @@ public class Road {
   }
 
   /**
-   * Sets the colorSymbol of a row in the grid for the background
+   * Sets the icon of a row in the grid for the background
    * 
-   * @param colorSymbol the symbol of the color to be set
+   * @param iconSymbol the symbol of the icon to be set
    * @param row which row is to be set this color
    * @param grid the grid of the background
    */
-  private void setColor(char colorSymbol, int row, IGrid grid) {
+  private void setColor(char iconSymbol, int row, IGrid grid) {
     if (this.row == 0 || this.row == this.grid.rows()-1){
-      colorSymbol = 'g';
+      iconSymbol = 'g';
     }
     for (GridCell cell : grid) {
       if (cell.pos().row() == row) {
-        this.grid.set(cell.pos(), colorSymbol);
+        this.grid.set(cell.pos(), iconSymbol);
       }
     }
   }

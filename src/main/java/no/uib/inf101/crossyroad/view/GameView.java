@@ -75,9 +75,6 @@ public class GameView extends JPanel {
 
         Rectangle2D bakgrunn = new Rectangle2D.Double(x, y, width, height);
 
-        //g2.setColor(Color.GRAY);
-        //g2.fill(bakgrunn);
-
         CellPositionToPixelConverter converter = new CellPositionToPixelConverter(bakgrunn, model.getDimension(), INNERMARGIN);
 
         drawCellsImages(g2, converter, model.getBackgroundTiles());
@@ -198,21 +195,5 @@ public class GameView extends JPanel {
         (this.getWidth() / dimension.cols())+150, this.getHeight() / dimension.rows(), this);
     }
 
-
-
-    //  private void drawCells(Graphics2D g2, CellPositionToPixelConverter converter, Iterable<GridCell> tiles) {
-    //     for (GridCell cell : tiles) {
-            
-    //         CellPosition cellPos = cell.pos();
-    //         Rectangle2D cellArea = converter.getBoundsOfCell(cellPos);
-
-    //         Character colorSymbol = cell.symbol();
-
-    //         Color colorCell = farger.getCellColor(colorSymbol);
-
-    //         g2.setColor(colorCell);
-    //         g2.fill(cellArea);
-    //     }
-    // }
 
 }
