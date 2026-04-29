@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 
 import no.uib.inf101.crossyroad.controller.ControllableGameModel;
 import no.uib.inf101.crossyroad.model.obstacles.Car;
-import no.uib.inf101.crossyroad.model.obstacles.CarFunctionality;
 import no.uib.inf101.crossyroad.model.obstacles.Obstacle;
 import no.uib.inf101.crossyroad.model.roads.RandomRoadFactory;
 import no.uib.inf101.crossyroad.view.ViewableGameModel;
@@ -30,25 +29,23 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   private Board board; 
   private Board background; 
   private Random random = new Random();
-  private JFrame frame; 
   private int level; 
 
   /**
    * The constructor for the GameModel
    * @param grid initiates a gamemodel given a grid
    */
-  public GameModel(IGrid grid, IGrid backgroundGrid, JFrame frame) {
+  public GameModel(IGrid grid, IGrid backgroundGrid) {
     this.grid = grid;
     this.backgroundGrid = backgroundGrid;
-    this.frame = frame; 
 
     this.board = new Board(grid);
     this.background = new Board(this.backgroundGrid);
 
-    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board, this.frame);
+    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board);
     this.cars = new ArrayList<>();
-    this.gameState = GameState.ACTIVE;
-    this.level = 0; 
+    this.gameState = GameState.HOMESCREEN;
+    this.level = 1; 
 
     this.grid.set(player.getCellPosition(), player.getChar());
     new RandomRoadFactory(backgroundGrid);
@@ -56,16 +53,41 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     spawnObstacles(20);     
   }
 
+  @Override
+  public void startGame() {
+    this.gameState = GameState.ACTIVE; 
+  }
+
+  @Override
+  public void restartGame() {
+    int rows = grid.rows(); 
+    int cols = grid.cols();
+    
+    this.grid = new Grid(rows, cols, ' ');
+    this.backgroundGrid = new Grid(rows, cols, ' ');
+    this.board = new Board(this.grid);
+    this.background = new Board(this.backgroundGrid);
+    this.player = new Player(new CellPosition(grid.rows()-1, (int) grid.cols()/2), 'r', this.board);
+    this.level = 1;  
+    this.cars.clear();
+    this.grid.set(getPlayerPosition(), player.getChar());
+    new RandomRoadFactory(backgroundGrid);
+    spawnObstacles(20);
+    this.gameState = GameState.ACTIVE;
+  }
+
   /**
    * A method to create a new board, background, cars and obstacles when a 
    * player reaches the other side
    */
   private void newRound() {
-    this.grid = new Grid(15, 20, ' ');
-    this.backgroundGrid = new Grid(15, 20, ' ');
+    int rows = grid.rows(); 
+    int cols = grid.cols();
+    this.grid = new Grid(rows, cols, ' ');
+    this.backgroundGrid = new Grid(rows, cols, ' ');
     this.board = new Board(this.grid);
     this.background = new Board(this.backgroundGrid);
-    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board, this.frame);
+    this.player = new Player(new CellPosition(grid.rows()-1, (int) grid.cols()/2), 'r', this.board);
     this.level++; 
     this.cars.clear();
     this.grid.set(getPlayerPosition(), player.getChar());
@@ -94,6 +116,21 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     }
     
     return true; 
+  }
+
+  @Override
+  public void pauseGame() {
+    if (this.gameState == GameState.ACTIVE) {
+      this.gameState = GameState.PAUSE;
+    } else {
+      this.gameState = GameState.ACTIVE;
+    }
+  }
+
+  @Override
+  public void goToHomeScreen() {
+    this.level = 1; 
+    gameState = GameState.HOMESCREEN; 
   }
 
   /**
@@ -131,12 +168,10 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return true; 
   }
 
-  @Override
   public CellPosition getPlayerPosition(){
     return this.player.getCellPosition();
   }
 
-  @Override
   public Player getPlayer() {
     return this.player; 
   }
@@ -193,7 +228,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   }
 
   @Override
-  public void moveCars(int screenWidth) {
+  public void moveCars(int screenWidth, int screenHeight) {
     List<Car> toRemove = new ArrayList<>();
     for (Car car : cars) {
       boolean crash = false; 
@@ -221,7 +256,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
         car.move();
       }
       //sjekke kræsj pr bil
-      if(checkCrash(car)) {
+      if(checkCrash(car, screenWidth, screenHeight)) {
         gameState = GameState.GAMEOVER;
       }
       if (car.isOffScreen(screenWidth)) {
@@ -276,22 +311,34 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
    * @param car the car to check for crashing with the player
    * @return true if it crashes with the player, false otherwise
    */
-  private boolean checkCrash(Car car) {
-    int carWidth = frame.getWidth() / board.cols(); 
-    int carHeight = frame.getHeight() / board.rows(); 
-    int carXR = car.getX() + carWidth; 
-    int carXL = car.getX(); 
-    int carYB = car.getY() + carHeight; 
+  private boolean checkCrash(Car car, int screenWidth, int screenHeight) {
+    int cellWidth = screenWidth / board.cols(); 
+    int cellHeight = screenHeight / board.rows(); 
+    
+    int carXL = car.getX();
+    int carXR = carXL + cellWidth; 
     int carYT = car.getY();
+    int carYB = carYT + cellHeight; 
 
-    if (carXR < player.getPlayerLeftX() + player.playerWidth() /2 || (player.getPlayerRightX() - player.playerWidth()/2) < carXL){
+    int playerCol = player.getCellPosition().col(); 
+    int playerRow = player.getCellPosition().row(); 
+    int playerXL = playerCol * cellWidth;
+    int playerXR = playerXL + cellWidth;
+    int playerYT = playerRow * cellHeight;
+    int playerYB = playerYT + cellHeight;
+
+    
+
+    if (carXR < playerXL + cellWidth /2 || ((playerXR) - cellWidth/2) < carXL){
       return false; 
     }
-    else if (carYT > (player.getPlayerBottomY() - player.playerHeight()/2) || (player.getPlayerTopY() + player.playerHeight()/2) > carYB) {
+    else if (carYT > (playerYB - cellHeight/2) || (playerYT + cellHeight/2) > carYB) {
       return false; 
     }
     return true; 
   }
+
+
 
 }
 

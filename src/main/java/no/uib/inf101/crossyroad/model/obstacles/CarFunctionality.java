@@ -35,7 +35,7 @@ public class CarFunctionality {
 
   }
 
-  public boolean moveCars(int screenWidth) {
+  public boolean moveCars(int screenWidth, int screenHeight) {
     List<Car> toRemove = new ArrayList<>();
 
     for (Car car : this.cars) {
@@ -98,20 +98,30 @@ public class CarFunctionality {
    */
   private boolean checkCrash(Car car) {
 
-    int carWidth = screenWidth / cols; 
-    int carHeight = screenHeight / rows; 
-    int carXR = car.getX() + carWidth; 
-    int carXL = car.getX(); 
-    int carYB = car.getY() + carHeight; 
+    int cellWidth = screenWidth / cols; 
+    int cellHeight = screenHeight / rows; 
+    
+    int carXL = car.getX();
+    int carXR = carXL + cellWidth; 
     int carYT = car.getY();
+    int carYB = carYT + cellHeight; 
 
-    if (carXR < player.getPlayerLeftX() + player.playerWidth() /2 || (player.getPlayerRightX() - player.playerWidth()/2) < carXL){
+    int playerCol = player.getCellPosition().col(); 
+    int playerRow = player.getCellPosition().row(); 
+    int playerXL = playerCol * cellWidth;
+    int playerXR = playerXL + cellWidth;
+    int playerYT = playerRow * cellHeight;
+    int playerYB = playerYT + cellHeight;
+
+    
+
+    if (carXR < playerXL + cellWidth /2 || ((playerXR) - cellWidth/2) < carXL){
       return false; 
     }
-    else if (carYT > (player.getPlayerBottomY() - player.playerHeight()/2) || (player.getPlayerTopY() + player.playerHeight()/2) > carYB) {
+    else if (carYT > (playerYB - cellHeight/2) || (playerYT + cellHeight/2) > carYB) {
       return false; 
     }
-    return true;
+    return true; 
   }
 
 }

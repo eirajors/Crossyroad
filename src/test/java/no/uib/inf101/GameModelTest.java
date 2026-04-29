@@ -19,7 +19,8 @@ public class GameModelTest {
     IGrid grid = new Grid(10, 10, ' ');
     IGrid backGrid = new Grid(10, 10, ' ');
 
-    GameModel model = new GameModel(grid, backGrid, null);
+    GameModel model = new GameModel(grid, backGrid);
+    model.startGame();
 
     CellPosition posNow = model.getPlayer().getCellPosition();
 
@@ -32,17 +33,19 @@ public class GameModelTest {
   }
 
   @Test
-  public void testWonGame() {
+  public void testRestart() {
     IGrid grid = new Grid(10, 10, ' ');
     IGrid backGrid = new Grid(10, 10, ' ');
 
-    GameModel model = new GameModel(grid, backGrid, null);
+    GameModel model = new GameModel(grid, backGrid);
+    model.startGame();
+
 
     assertEquals(model.getGameState(), GameState.ACTIVE);
 
     assertTrue(model.movePlayer(-9, 0));
 
-    assertEquals(model.getGameState(), GameState.WON);
+    assertEquals(model.getPlayerPosition().row(), grid.rows()-1);
   }
 
 

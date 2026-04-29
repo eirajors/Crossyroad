@@ -8,7 +8,6 @@ Og hvilken vei de kommer fra har noe å si på verdiene de har, altså om de gå
 
 
 
-- når du kommer til andre siden refresher boardet, og du får et nytt board
 - når du kommer til andre siden får du level opp
 - nytt level, flere biler spawner, evt kjører fortere
 - timer på hvor lang tid du har på deg til å komme deg over

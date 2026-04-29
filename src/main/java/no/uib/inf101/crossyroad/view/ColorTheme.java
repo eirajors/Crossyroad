@@ -28,7 +28,7 @@ public class ColorTheme{
             return colorCorrMap.get(c);
         }
         else{
-            throw new IllegalArgumentException("Ingen tilgjengelige farger for dette tegnet");
+            throw new IllegalArgumentException("Ingen tilgjengelige farger for tegnet:" + c);
         }
     }
 

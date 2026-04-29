@@ -22,10 +22,10 @@ public class Main {
 		
 		IGrid grid = new Grid(15, 20, ' ');
 		IGrid backgroundGrid = new Grid(15, 20, ' ');
-		GameModel model = new GameModel(grid, backgroundGrid, frame);
+		GameModel model = new GameModel(grid, backgroundGrid);
 
 		GameView view = new GameView(model);
-		GameController controller = new GameController(model, view);
+		GameController controller = new GameController(model, model, view);
 		controller.updateView();
 
 		frame.add(view);
