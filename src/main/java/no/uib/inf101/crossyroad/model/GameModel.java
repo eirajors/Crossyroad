@@ -27,6 +27,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   private Board background; 
   private final Random random = new Random();
   private int level; 
+  private int obstaclesToSpawn;
 
   /**
    * The constructor for the GameModel
@@ -43,10 +44,11 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.cars = new ArrayList<>();
     this.gameState = GameState.HOMESCREEN;
     this.level = 1; 
+    this.obstaclesToSpawn = 20; 
 
     this.grid.set(player.getCellPosition(), player.getChar());
     new RandomRoadFactory(backgroundGrid);
-    spawnObstacles(20);     
+    spawnObstacles(obstaclesToSpawn);     
   }
 
   @Override
@@ -68,7 +70,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.cars.clear();
     this.grid.set(getPlayerPosition(), player.getChar());
     new RandomRoadFactory(backgroundGrid);
-    spawnObstacles(20);
+    spawnObstacles(this.obstaclesToSpawn);
     this.gameState = GameState.ACTIVE;
   }
 
@@ -88,7 +90,10 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.cars.clear();
     this.grid.set(getPlayerPosition(), player.getChar());
     new RandomRoadFactory(backgroundGrid);
-    spawnObstacles(20);
+    if (obstaclesToSpawn <= 30) {
+      obstaclesToSpawn += level; 
+    }
+    spawnObstacles(obstaclesToSpawn);
   }
 
   @Override
@@ -209,19 +214,35 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
    */
   private void spawnObstacles(int quantity) {
     int count = 0; 
+    boolean spawnObstacle = true; 
     for (count = 0; count <= quantity;) {
       int randRow = random.nextInt(grid.rows() -2) + 1; 
       int randCol = random.nextInt(grid.cols()-2) + 1;
 
       CellPosition posObs = new CellPosition(randRow, randCol);
       if (backgroundGrid.get(posObs) == 'g') {
+        // check if there are too many obstacles in the same row 
+        int countObs = 0; 
+        for (int col = 0; col < grid.cols(); col++) {
+          Character chr = grid.get(new CellPosition(randRow, col));
+          if (chr == 'd' || chr == 'b') {
+            countObs ++;
+          }
+          if (countObs == grid.cols()-2) {
+            spawnObstacle = false; 
+          }
+        }
+
         Obstacle obs = new Obstacle(posObs);
         char o = obs.getChar();
         if (o == ' '){
           throw new IllegalArgumentException("Character for an obstacle can not be empty.");
         }
-        grid.set(posObs, obs.getChar());
-        count ++; 
+        if (spawnObstacle){
+          grid.set(posObs, obs.getChar());
+          count ++; 
+        }
+        
       }
     }
   } 

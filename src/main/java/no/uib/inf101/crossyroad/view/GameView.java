@@ -19,7 +19,7 @@ import no.uib.inf101.grid.GridDimension;
 
 public class GameView extends JPanel {
     //fjerne outermargin
-    private final IconTheme imageIcons; 
+    private IconTheme imageIcons; 
     private final int OUTERMARGIN = 0;
     private final int INNERMARGIN = 0;
     private ViewableGameModel model; 
@@ -114,7 +114,6 @@ public class GameView extends JPanel {
 
         for (Car car : model.getCars()) {
             if (car.getSpeed() > 0) {
-                
                 Image carImage = imageIcons.getCellImage('l');
                 g2.drawImage(carImage, (int) car.getX(), (int) car.getY(), carWidth, carHeight, this);
             }
@@ -179,6 +178,11 @@ public class GameView extends JPanel {
         g2.setColor(new Color(0, 0, 0, 128));
         Rectangle2D rect = new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight());
         g2.fill(rect);
+
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Dialoginput", Font.BOLD, 20));
+        int textWidth = g2.getFontMetrics().stringWidth("You reached level:" + this.model.getLevel());
+        g2.drawString("You reached level:" + this.model.getLevel(), (this.getWidth() / 2) - (textWidth / 2), 40);
 
         Image gameOver = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/gameOver.png")).getImage(); 
         g2.drawImage(gameOver, (this.getWidth() / 2)-200, (this.getHeight() /10), 
