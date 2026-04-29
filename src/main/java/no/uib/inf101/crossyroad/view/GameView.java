@@ -142,8 +142,8 @@ public class GameView extends JPanel {
 
         g2.drawImage(backgroundHS, 0, 0, this.getWidth(), this.getHeight(), this);
 
-        g2.drawImage(playerGif, this.getWidth()/3, 50, 300, 300, this);
-        g2.drawImage(logo, 0, 200, this.getWidth(), this.getHeight(), this);
+        g2.drawImage(playerGif, this.getWidth()/3, 50, 315, 315, this);
+        g2.drawImage(logo, this.getWidth()/2-175, 300, 350, 150, this);
 
 
         g2.drawImage(pressGif, getWidth()/2-150, getHeight()/2 + 180, 270, 70, this);

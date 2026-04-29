@@ -70,6 +70,8 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.cars.clear();
     this.grid.set(getPlayerPosition(), player.getChar());
     new RandomRoadFactory(backgroundGrid);
+
+    this.obstaclesToSpawn = 20; 
     spawnObstacles(this.obstaclesToSpawn);
     this.gameState = GameState.ACTIVE;
   }
@@ -89,9 +91,11 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.level++; 
     this.cars.clear();
     this.grid.set(getPlayerPosition(), player.getChar());
+
     new RandomRoadFactory(backgroundGrid);
-    if (obstaclesToSpawn <= 30) {
-      obstaclesToSpawn += level; 
+
+    if (obstaclesToSpawn <= 32) {
+      obstaclesToSpawn += 1; 
     }
     spawnObstacles(obstaclesToSpawn);
   }
@@ -206,43 +210,44 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   }
 
   /**
-   * spawns the obstacles on the road (that are not able to move) 
+   * Spawns the stillstanding obstacles on a grass road
    * by setting the symbol on the grid for that obstacle
+   * It will also check if there are already too many obstacles in the road, 
+   * if so it will not spawn any more obstacles
    * 
    * @param quantity how many obstacles to spawn
    * @throws IllegalArgumentException if an object has an invalid character
    */
   private void spawnObstacles(int quantity) {
     int count = 0; 
-    boolean spawnObstacle = true; 
-    for (count = 0; count <= quantity;) {
+    int maxTries = 1000; 
+    int tries = 0; 
+
+    while (count <= quantity && tries < maxTries) {
+      tries ++; 
       int randRow = random.nextInt(grid.rows() -2) + 1; 
       int randCol = random.nextInt(grid.cols()-2) + 1;
 
       CellPosition posObs = new CellPosition(randRow, randCol);
-      if (backgroundGrid.get(posObs) == 'g') {
-        // check if there are too many obstacles in the same row 
-        int countObs = 0; 
+
+      if (backgroundGrid.get(posObs) == 'g' && grid.get(posObs) == ' ') {
+        int countObsInRow = 0; 
+
         for (int col = 0; col < grid.cols(); col++) {
           Character chr = grid.get(new CellPosition(randRow, col));
           if (chr == 'd' || chr == 'b') {
-            countObs ++;
-          }
-          if (countObs == grid.cols()-2) {
-            spawnObstacle = false; 
+          countObsInRow++;
           }
         }
-
-        Obstacle obs = new Obstacle(posObs);
-        char o = obs.getChar();
-        if (o == ' '){
+        if (countObsInRow < grid.cols() - 2) {
+          Obstacle obs = new Obstacle(posObs);
+          char o = obs.getChar();
+          if (o == ' '){
           throw new IllegalArgumentException("Character for an obstacle can not be empty.");
+          }
+          grid.set(posObs, o);
+          count++;
         }
-        if (spawnObstacle){
-          grid.set(posObs, obs.getChar());
-          count ++; 
-        }
-        
       }
     }
   } 
@@ -311,7 +316,11 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     }
     int y = randomHighway * cellHeight; 
 
-    int speedX = random.nextInt(8 - 2 + 1) + 2;
+    int minSpeed = level; 
+    if (level >= 6) {
+      minSpeed = 6; 
+    }
+    int speedX = random.nextInt(8 - minSpeed + 1) + minSpeed;
     if (highwayChar.equals('e')){
       
       cars.add(new Car(y, speedX, screenWidth, screenHeight, board.rows(), board.cols()));
