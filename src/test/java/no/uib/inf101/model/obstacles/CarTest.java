@@ -11,6 +11,16 @@ import no.uib.inf101.crossyroad.model.obstacles.Car;
 public class CarTest {
 
 @Test
+void TestGetCarPosition() {
+    // screenWidth=100, cols=5 -> width = 20. 
+    // Siden speedX er 3 (>0), vil x bli satt til -20 i konstruktøren.
+    Car car = new Car(30, 3, 100, 100, 4, 5);
+
+    assertEquals(30, car.getY());
+    assertEquals(-car.getWidth(), car.getX()); 
+}
+
+@Test
   void TestMoveCarRight() {
     Car car = new Car(0, 3, 100, 100, 4, 5);
 
@@ -44,13 +54,6 @@ public class CarTest {
     assertTrue(oldY == newY);
   }
 
-  @Test
-  void TestGetCarPosition() {
-    Car car = new Car(30, 3, 0, 0, 4, 5);
-
-    assertTrue(car.getY() == 30);
-    assertTrue(car.getX() == -car.getWidth());
-  }
 
   @Test
   void TestOffScreen() {
