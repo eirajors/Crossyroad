@@ -19,7 +19,7 @@ import no.uib.inf101.grid.GridDimension;
 
 public class GameView extends JPanel {
     //fjerne outermargin
-    private IconTheme imageIcons; 
+    private final IconTheme imageIcons; 
     private final int OUTERMARGIN = 0;
     private final int INNERMARGIN = 0;
     private ViewableGameModel model; 
@@ -114,6 +114,7 @@ public class GameView extends JPanel {
 
         for (Car car : model.getCars()) {
             if (car.getSpeed() > 0) {
+                
                 Image carImage = imageIcons.getCellImage('l');
                 g2.drawImage(carImage, (int) car.getX(), (int) car.getY(), carWidth, carHeight, this);
             }

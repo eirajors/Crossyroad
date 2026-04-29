@@ -10,8 +10,8 @@ public class Obstacle implements IObstacle{
 
   private char chr; 
   private CellPosition pos; 
-  private List<Character> elements; 
-  private Random random; 
+  private final List<Character> elements; 
+  private final Random random; 
 
   /**
    * Creates a random obstacle at the given cellposition

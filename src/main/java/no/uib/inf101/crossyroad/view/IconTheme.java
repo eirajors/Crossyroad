@@ -8,8 +8,7 @@ import javax.swing.ImageIcon;
 
 public class IconTheme {
 
-  Character color; 
-  Map<Character, Image> iconMap; 
+  private Map<Character, Image> iconMap; 
 
   public IconTheme() {
     this.iconMap = new HashMap<Character, Image>(); 
@@ -19,11 +18,12 @@ public class IconTheme {
       'g', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/grassBlock.png")).getImage(), 
       'l', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/carLeft.png")).getImage(),
       'n', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/carRight.png")).getImage(),
+      'a', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/carRight.png")).getImage(),
       'e', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/highway.png")).getImage(),
       's', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/highway.png")).getImage(),
       'd', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/tree.png")).getImage(),
       'b', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/log.png")).getImage(),
-      ' ', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/null.png")).getImage());
+      ' ', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/null.png")).getImage()); 
   }
 
   /**

@@ -6,7 +6,7 @@ public class Player {
 
   private CellPosition pos; 
   private final char chr; 
-  private Board board; 
+  private final Board board; 
 
   /**
    * Constructur

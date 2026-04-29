@@ -19,7 +19,7 @@ public class GameController implements KeyListener, ActionListener, MouseListene
   private final ControllableGameModel model;
   private final ViewableGameModel viewModel;
   private final GameView view;  
-  private Random random;
+  private final Random random;
 
   private Timer timer; 
 
@@ -45,6 +45,9 @@ public class GameController implements KeyListener, ActionListener, MouseListene
 
   }
 
+  /**
+   * updates the view 
+   */
   public void updateView() {
     view.update();
   }

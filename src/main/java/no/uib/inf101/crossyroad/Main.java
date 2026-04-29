@@ -19,9 +19,12 @@ public class Main {
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setLayout(new java.awt.BorderLayout());
+
+		int rows = 15; 
+		int cols = 20;
 		
-		IGrid grid = new Grid(15, 20, ' ');
-		IGrid backgroundGrid = new Grid(15, 20, ' ');
+		IGrid grid = new Grid(rows, cols, ' ');
+		IGrid backgroundGrid = new Grid(rows, cols, ' ');
 		GameModel model = new GameModel(grid, backgroundGrid);
 
 		GameView view = new GameView(model);

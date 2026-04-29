@@ -10,7 +10,7 @@ public class Road {
   private final List<String> ROAD_STYLES = List.of("grass", "highway", "highwayRight");
 
   private final String typeRoad; 
-  private IGrid grid; 
+  private final IGrid grid; 
   private final int row;
 
   private static final HashMap<String, Character> FARGER = new HashMap<>();

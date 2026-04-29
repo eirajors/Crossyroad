@@ -3,10 +3,10 @@ package no.uib.inf101.crossyroad.model.obstacles;
 
 public class Car {
   private int x;
-  private int y;
-  private int speedX; 
-  private int cols;
-  private int rows; 
+  private final int y;
+  private final int speedX; 
+  private final int cols;
+  private final int rows; 
   private int screenWidth;
   private int screenHeight; 
 

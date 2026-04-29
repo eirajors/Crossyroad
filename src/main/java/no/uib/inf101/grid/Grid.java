@@ -4,11 +4,10 @@ import java.util.Iterator;
 
 public class Grid implements IGrid{
 
-    //Character [][] grid;
-    Character [][] grid;
-    int rows; 
-    int cols;
-    Character defaultValue; 
+    private Character [][] grid;
+    private int rows; 
+    private int cols;
+    private Character defaultValue; 
     
     //konstruktør
     public Grid(int rows, int cols){
@@ -28,6 +27,12 @@ public class Grid implements IGrid{
         }
     }
 
+    /**
+     * 
+     * @param rows how many rows the grid is going to have
+     * @param cols how many columns the grid is going to have
+     * @param defaultValue the defaultvalue to fill the grid with 
+     */
     public Grid(int rows, int cols, Character defaultValue){
         this.rows = rows;
         this.cols = cols;
