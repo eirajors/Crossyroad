@@ -51,6 +51,10 @@ public class Car {
     return this.y; 
   }
 
+  /***
+   * 
+   * @return the speed of the car aka how many x-pixels a car moves every time it moves
+   */
   public int getSpeed() {
     return this.speedX;
   }

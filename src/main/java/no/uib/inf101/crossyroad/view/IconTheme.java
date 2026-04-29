@@ -26,6 +26,11 @@ public class IconTheme {
       ' ', new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/null.png")).getImage());
   }
 
+  /**
+   * 
+   * @param c the character which refers to a given image
+   * @return the image of which the character is referring to 
+   */
   public Image getCellImage(Character c){
         if(iconMap.keySet().contains(c)){
             return iconMap.get(c);

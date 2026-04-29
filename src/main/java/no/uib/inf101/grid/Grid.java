@@ -8,6 +8,7 @@ public class Grid implements IGrid{
     Character [][] grid;
     int rows; 
     int cols;
+    Character defaultValue; 
     
     //konstruktør
     public Grid(int rows, int cols){
@@ -17,12 +18,21 @@ public class Grid implements IGrid{
         this.rows = rows;
         this.cols = cols;
         this.grid = new Character[rows][cols];
+
+        this.defaultValue = ' ';
+
+        for(int r = 0; r < (grid.length); r++){
+            for(int c = 0; c < (grid[0].length); c++){
+                grid[r][c] = defaultValue;
+            }
+        }
     }
 
     public Grid(int rows, int cols, Character defaultValue){
         this.rows = rows;
         this.cols = cols;
         this.grid = new Character[rows][cols];
+        this.defaultValue = defaultValue;
 
         //sette inn default value i alle plasser i grid
 

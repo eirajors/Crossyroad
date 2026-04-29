@@ -21,6 +21,12 @@ public class Road {
     FARGER.put("highwayRight", 's');
   }
 
+  /***
+   * Constructor, creates a road given whick type of road, which row, and on what grid to fill
+   * @param typeRoad what kind of road is to be drawn
+   * @param row which row is it that is to be filled
+   * @param grid what grid is going to be filled with the given type of road
+   */
   public Road(String typeRoad, int row, IGrid grid) {
     this.typeRoad = typeRoad; 
     this.row = row; 

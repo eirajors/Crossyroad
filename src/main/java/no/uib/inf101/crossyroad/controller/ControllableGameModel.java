@@ -4,14 +4,18 @@ package no.uib.inf101.crossyroad.controller;
 public interface ControllableGameModel {
 
   /**
-   * Moves player by deltarows and deltacols
+   * Attempts to move a player by the given row and column 
    * 
    * @param deltaRow how many rows the player is moved by
    * @param deltaCol how many cols the player is moved by
-   * @return returns true if the move is allowed, and false otherwise
+   * @return returns true if the move is successfull, and false if it was unsuccessful, or the gameState is not ACTIVE
    */
   public boolean movePlayer(int deltaRow, int deltaCol);
 
+
+  /**
+   * Sets the gamestate to ACTIVE so that the game can start
+   */
   public void startGame();
 
 
@@ -31,14 +35,28 @@ public interface ControllableGameModel {
   public void moveCars(int screenWidth, int screenHeight);
 
   /**
-   * spawns a new car in the grid on a randomly selected highway
+   * Spawns a car on a random highway. The direction and speed depend on the type of road
+   * 
+   * @param screenWidth width of the screen in pixels
+   * @param screeenHeight height of the screen in pixels
    */
   public void spawnCar(int screenWidth, int screeenHeight);
-
+  
+  /**
+   * Sets the gamestate to PAUSE 
+   */
   public void pauseGame();
 
+  /**
+   * Sets the gamestate to HOMESCREEN. Will also restart the game
+   */
   public void goToHomeScreen();
 
+  /**
+   * Restarts the game to its initial state. This includes creating new grids, resetting the player position, clearing all cars,
+   * resetting the level to 1, generating new background and obstacles. 
+   * After calling this method, the game state is set to ACTIVE.
+  */
   public void restartGame(); 
   
 }

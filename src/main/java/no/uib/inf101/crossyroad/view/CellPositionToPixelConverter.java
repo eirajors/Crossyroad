@@ -18,6 +18,12 @@ public class CellPositionToPixelConverter {
         this.margin = margin;
     }
 
+    /**
+     * Calculates the width and height of a gridcell given a cellposition
+     * 
+     * @param pos the Cellposition where the cell is supposed to be drawn 
+     * @return a new rectangle in the given cellposition
+     */
     public Rectangle2D getBoundsOfCell(CellPosition pos){
         double totWidth = box.getWidth();
         double totHeight = box.getHeight();

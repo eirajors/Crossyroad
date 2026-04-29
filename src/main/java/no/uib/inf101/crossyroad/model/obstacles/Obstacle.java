@@ -13,6 +13,10 @@ public class Obstacle implements IObstacle{
   private List<Character> elements; 
   private Random random; 
 
+  /**
+   * Creates a random obstacle at the given cellposition
+   * @param pos The cellpostition where the obstacle spawns
+   */
   public Obstacle(CellPosition pos) {
     this.chr = ' '; 
     this.pos = pos; 

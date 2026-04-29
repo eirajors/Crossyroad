@@ -11,12 +11,20 @@ public class RandomRoadFactory {
   private IGrid backgroundGrid; 
    
 
+  /**
+   * Adds rows of randomly selected rows to the background
+   * @param backgroundGrid the background where the roads are drawn
+   */
   public RandomRoadFactory(IGrid backgroundGrid) {
     this.backgroundGrid = backgroundGrid;
     
     fillGrid(this.backgroundGrid);
   }
 
+  /**
+   * 
+   * @return A randomly selected s which refers to which type of road is to be drawn
+   */
   private String getNext() {
     List<String> roads = List.of("grass", "highway", "highwayRight");
 
@@ -27,6 +35,10 @@ public class RandomRoadFactory {
     return s;
   }
 
+  /**
+   * Fills every row of a given grid with randomly selected roads
+   * @param grid the grid where the roads are to be filled
+   */
   private void fillGrid(IGrid grid) {
     for (int row = 0; row < grid.rows(); row++) {
       String typeRoad = getNext(); 

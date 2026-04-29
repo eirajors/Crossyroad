@@ -19,7 +19,6 @@ import no.uib.inf101.grid.GridDimension;
 
 public class GameView extends JPanel {
     //fjerne outermargin
-    private ColorTheme farger;
     private IconTheme imageIcons; 
     private final int OUTERMARGIN = 0;
     private final int INNERMARGIN = 0;
@@ -29,9 +28,6 @@ public class GameView extends JPanel {
     private Image playerGif; 
     private Image logo; 
    
-
-    // private Character color;
-
     // konstruktør
     public GameView(ViewableGameModel model) {
         this.model = model; 
@@ -40,7 +36,6 @@ public class GameView extends JPanel {
         this.playerGif = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/playerGif.gif")).getImage();
         this.logo = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/logo.png")).getImage();
 
-        this.farger = new ColorTheme();
         this.imageIcons = new IconTheme();      
     }
 
@@ -71,12 +66,7 @@ public class GameView extends JPanel {
         }
 
         if (model.getGameState() == GameState.GAMEOVER) {
-            g2.setColor(new Color(0, 0, 0, 128));
-            Rectangle2D rect = new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight());
-            g2.fill(rect);
-            drawMessage(g2, "GAME OVER");
-
-            
+            drawGameOver(g2);
         }
     }
 
@@ -189,6 +179,30 @@ public class GameView extends JPanel {
 
     }
 
+    private void drawGameOver(Graphics2D g2) {
+        g2.setColor(new Color(0, 0, 0, 128));
+        Rectangle2D rect = new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight());
+        g2.fill(rect);
+
+        // g2.setColor(Color.WHITE);
+        // g2.setFont(new Font("Dialoginput", Font.BOLD, 50));
+        // int textWidth = g2.getFontMetrics().stringWidth("GAME OVER");
+        // g2.drawString("GAME OVER", (this.getWidth() / 2) - (textWidth / 2), this.getHeight() / 2 + 40);
+
+        Image gameOver = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/gameOver.png")).getImage(); 
+        g2.drawImage(gameOver, (this.getWidth() / 2)-200, (this.getHeight() /10), 
+        400, 400, this);
+
+
+        Image restart = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/restart.png")).getImage(); 
+        g2.drawImage(restart, (this.getWidth() / 2)-100, (this.getHeight() /2)+150, 
+        (this.getWidth() / dimension.cols())+150, this.getHeight() / dimension.rows(), this);
+
+        Image quit = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/quit.png")).getImage(); 
+        g2.drawImage(quit, (this.getWidth() / 2)-100, (this.getHeight() /2)+200, 
+        (this.getWidth() / dimension.cols())+150, this.getHeight() / dimension.rows(), this);
+    }
+
 
 
     //  private void drawCells(Graphics2D g2, CellPositionToPixelConverter converter, Iterable<GridCell> tiles) {
@@ -205,8 +219,5 @@ public class GameView extends JPanel {
     //         g2.fill(cellArea);
     //     }
     // }
-
-
-    
 
 }

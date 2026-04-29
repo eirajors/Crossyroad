@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.JFrame;
-
 import no.uib.inf101.crossyroad.controller.ControllableGameModel;
 import no.uib.inf101.crossyroad.model.obstacles.Car;
 import no.uib.inf101.crossyroad.model.obstacles.Obstacle;
@@ -24,7 +22,6 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   private IGrid backgroundGrid;
   private Player player;
   private List<Car> cars;
-  //private CarFunctionality carFunctionality; 
 
   private Board board; 
   private Board background; 
@@ -42,14 +39,13 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.board = new Board(grid);
     this.background = new Board(this.backgroundGrid);
 
-    this.player = new Player(new CellPosition(grid.rows()-1, 7), 'r', this.board);
+    this.player = new Player(new CellPosition(grid.rows()-1, (int)(grid.cols()/2)), 'r', this.board);
     this.cars = new ArrayList<>();
     this.gameState = GameState.HOMESCREEN;
     this.level = 1; 
 
     this.grid.set(player.getCellPosition(), player.getChar());
     new RandomRoadFactory(backgroundGrid);
-    //this.carFunctionality = new CarFunctionality(backgroundGrid, cars, frame, this.board.rows(), this.board.cols(), player);
     spawnObstacles(20);     
   }
 
@@ -129,7 +125,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
 
   @Override
   public void goToHomeScreen() {
-    this.level = 1; 
+    this.restartGame();
     gameState = GameState.HOMESCREEN; 
   }
 
@@ -168,10 +164,18 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     return true; 
   }
 
+  /**
+   * 
+   * @return the players current cellposition
+   */
   public CellPosition getPlayerPosition(){
     return this.player.getCellPosition();
   }
 
+  /**
+   * 
+   * @return returns the player
+   */
   public Player getPlayer() {
     return this.player; 
   }
@@ -201,7 +205,7 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
    * by setting the symbol on the grid for that obstacle
    * 
    * @param quantity how many obstacles to spawn
-   * @throws char if an object is without a character
+   * @throws IllegalArgumentException if an object has an invalid character
    */
   private void spawnObstacles(int quantity) {
     int count = 0; 
@@ -306,10 +310,12 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
   }
 
   /***
-   * Method to check if a car crashes with the player
+   * Checks whether a given car has collided with the player
    * 
-   * @param car the car to check for crashing with the player
-   * @return true if it crashes with the player, false otherwise
+   * @param car the car to check collision with
+   * @param screenWidth width of the screen in pixels
+   * @param screenHeight height of the screen in pixels
+   * @return true if the car overlaps with the player, false otherwise
    */
   private boolean checkCrash(Car car, int screenWidth, int screenHeight) {
     int cellWidth = screenWidth / board.cols(); 
