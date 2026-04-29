@@ -56,22 +56,32 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
     this.gameState = GameState.ACTIVE; 
   }
 
-  @Override
-  public void restartGame() {
-    int rows = grid.rows(); 
+/**
+ * A method which resets the board. It will generate a new randomly generated board. 
+ */
+  private void initializeBoard() {
+    int rows = grid.rows();
     int cols = grid.cols();
     
     this.grid = new Grid(rows, cols, ' ');
     this.backgroundGrid = new Grid(rows, cols, ' ');
     this.board = new Board(this.grid);
     this.background = new Board(this.backgroundGrid);
-    this.player = new Player(new CellPosition(grid.rows()-1, (int) grid.cols()/2), 'r', this.board);
-    this.level = 1;  
+    
+    this.player = new Player(new CellPosition(rows - 1, cols / 2), 'r', this.board);
     this.cars.clear();
     this.grid.set(getPlayerPosition(), player.getChar());
+    
     new RandomRoadFactory(backgroundGrid);
+}
 
+  @Override
+  public void restartGame() {
+    this.level = 1;  
     this.obstaclesToSpawn = 20; 
+
+    initializeBoard();
+
     spawnObstacles(this.obstaclesToSpawn);
     this.gameState = GameState.ACTIVE;
   }
@@ -81,18 +91,9 @@ public class GameModel implements ControllableGameModel, ViewableGameModel {
    * player reaches the other side
    */
   private void newRound() {
-    int rows = grid.rows(); 
-    int cols = grid.cols();
-    this.grid = new Grid(rows, cols, ' ');
-    this.backgroundGrid = new Grid(rows, cols, ' ');
-    this.board = new Board(this.grid);
-    this.background = new Board(this.backgroundGrid);
-    this.player = new Player(new CellPosition(grid.rows()-1, (int) grid.cols()/2), 'r', this.board);
     this.level++; 
-    this.cars.clear();
-    this.grid.set(getPlayerPosition(), player.getChar());
 
-    new RandomRoadFactory(backgroundGrid);
+    initializeBoard();
 
     if (obstaclesToSpawn <= 32) {
       obstaclesToSpawn += 1; 
