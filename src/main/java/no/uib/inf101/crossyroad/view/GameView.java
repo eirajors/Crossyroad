@@ -113,14 +113,6 @@ public class GameView extends JPanel {
         return new Dimension(width, height);
     }
 
-    private void drawMessage(Graphics2D g2, String message) {
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Dialoginput", Font.BOLD, 20));
-        int textWidth = g2.getFontMetrics().stringWidth(message);
-        g2.drawString(message, (this.getWidth() / 2) - (textWidth / 2), this.getHeight() / 2 + 40);
-
-    }
-
     private void drawCars(Graphics2D g2) {
         int carWidth = (getWidth() - (OUTERMARGIN * 2))/ dimension.cols();
         int carHeight = (getHeight() - (OUTERMARGIN * 2)) / dimension.rows();
