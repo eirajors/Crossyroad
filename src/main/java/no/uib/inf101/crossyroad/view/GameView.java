@@ -24,17 +24,12 @@ public class GameView extends JPanel {
     private final int INNERMARGIN = 0;
     private ViewableGameModel model; 
     private final GridDimension dimension; 
-    private Image pressGif; 
-    private Image playerGif; 
-    private Image logo; 
+
    
     // konstruktør
     public GameView(ViewableGameModel model) {
         this.model = model; 
         this.dimension = model.getDimension();
-        this.pressGif = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/pressUp.gif")).getImage();
-        this.playerGif = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/playerGif.gif")).getImage();
-        this.logo = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/logo.png")).getImage();
 
         this.imageIcons = new IconTheme();      
     }
@@ -142,17 +137,25 @@ public class GameView extends JPanel {
     }
 
     private void drawHomeScreen(Graphics2D g2) {
-        g2.setColor(new Color(255, 255, 204));
-        g2.fillRect(0, 0, this.getWidth(), this.getHeight());
+        Image logo = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/logo.png")).getImage();
+        Image playerGif = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/playerGif.gif")).getImage();
+        Image pressGif = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/pressUp.gif")).getImage();
+        Image backgroundHS = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/streetHomescreen.png")).getImage();
+
+
+        g2.drawImage(backgroundHS, 0, 0, this.getWidth(), this.getHeight(), this);
+
         g2.drawImage(playerGif, this.getWidth()/3, 50, 300, 300, this);
         g2.drawImage(logo, 0, 200, this.getWidth(), this.getHeight(), this);
 
 
-        g2.drawImage(pressGif, getWidth()/2-150, getHeight()/2 + 120, 300, 300, this);
+        g2.drawImage(pressGif, getWidth()/2-150, getHeight()/2 + 180, 270, 70, this);
 
     }
 
     private void drawPauseScreen(Graphics2D g2) {
+        Image playerGif = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/playerGif.gif")).getImage();
+
         g2.setColor(new Color(255, 255, 204, 100));
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
         g2.drawImage(playerGif, 20, -40, this.getWidth() - 20, this.getHeight()- 20, this);
@@ -175,11 +178,6 @@ public class GameView extends JPanel {
         g2.setColor(new Color(0, 0, 0, 128));
         Rectangle2D rect = new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight());
         g2.fill(rect);
-
-        // g2.setColor(Color.WHITE);
-        // g2.setFont(new Font("Dialoginput", Font.BOLD, 50));
-        // int textWidth = g2.getFontMetrics().stringWidth("GAME OVER");
-        // g2.drawString("GAME OVER", (this.getWidth() / 2) - (textWidth / 2), this.getHeight() / 2 + 40);
 
         Image gameOver = new ImageIcon(getClass().getResource("/no/uib/inf101/crossyroad/pictures/gameOver.png")).getImage(); 
         g2.drawImage(gameOver, (this.getWidth() / 2)-200, (this.getHeight() /10), 
